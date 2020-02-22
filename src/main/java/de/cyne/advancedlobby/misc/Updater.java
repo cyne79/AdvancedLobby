@@ -20,19 +20,14 @@ public class Updater {
         this.currentVersion = AdvancedLobby.getInstance().getDescription().getVersion();
     }
 
-    public static enum UpdateResult {
+    public enum UpdateResult {
         UPDATE_AVAILABLE, NO_UPDATE, VERSION_AHEAD, CONNECTION_ERROR, DISABLED
     }
 
     public void checkLatestVersion() {
         try {
-            HttpURLConnection httpConnection = (HttpURLConnection) new URL("https://www.spigotmc.org/api/general.php")
+            HttpURLConnection httpConnection = (HttpURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId)
                     .openConnection();
-            httpConnection.setDoOutput(true);
-            httpConnection.setRequestMethod("POST");
-            httpConnection.getOutputStream().write(
-                    ("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=" + this.resourceId)
-                            .getBytes("UTF-8"));
             this.latestVersion = new BufferedReader(new InputStreamReader(httpConnection.getInputStream())).readLine();
         } catch (IOException e) {
             this.setUpdateResult(UpdateResult.CONNECTION_ERROR);
