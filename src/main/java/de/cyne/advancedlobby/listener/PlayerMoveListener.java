@@ -134,24 +134,24 @@ public class PlayerMoveListener implements Listener {
                 if (p != players) {
                     if (AdvancedLobby.shield.contains(players)) {
                         if (!p.hasMetadata("NPC") && !AdvancedLobby.silentLobby.contains(p) && !AdvancedLobby.silentLobby.contains(players)) {
-                            if (p.getLocation().distance(players.getLocation()) <= 2.5) {
+                            if (!p.hasPermission("advancedlobby.shield.bypass")) {
+                                if (p.getLocation().distance(players.getLocation()) <= 2.5) {
 
+                                    Vector pV = p.getLocation().toVector();
+                                    Vector pSV = players.getLocation().toVector();
+                                    Vector v = pV.clone().subtract(pSV).normalize().multiply(0.5D).setY(0.25D);
 
-                                Vector pV = p.getLocation().toVector();
-                                Vector pSV = players.getLocation().toVector();
-                                Vector v = pV.clone().subtract(pSV).normalize().multiply(0.5D).setY(0.25D);
+                                    p.setVelocity(v);
 
+                                    p.playEffect(players.getLocation(), Effect.ENDER_SIGNAL, 1);
+                                    players.playEffect(players.getLocation(), Effect.ENDER_SIGNAL, 1);
 
-                                p.setVelocity(v);
-
-                                p.playEffect(players.getLocation(), Effect.ENDER_SIGNAL, 1);
-                                players.playEffect(players.getLocation(), Effect.ENDER_SIGNAL, 1);
-
-                                for (Player players1 : Bukkit.getOnlinePlayers()) {
-                                    if (p != players1) {
-                                        if (!AdvancedLobby.silentLobby.contains(p) && !AdvancedLobby.silentLobby.contains(players)) {
-                                            if (!p.hasPermission("advancedlobby.shield.bypass")) {
-                                                players1.playEffect(players.getLocation(), Effect.ENDER_SIGNAL, 1);
+                                    for (Player players1 : Bukkit.getOnlinePlayers()) {
+                                        if (p != players1) {
+                                            if (!AdvancedLobby.silentLobby.contains(p) && !AdvancedLobby.silentLobby.contains(players)) {
+                                                if (!p.hasPermission("advancedlobby.shield.bypass")) {
+                                                    players1.playEffect(players.getLocation(), Effect.ENDER_SIGNAL, 1);
+                                                }
                                             }
                                         }
                                     }
