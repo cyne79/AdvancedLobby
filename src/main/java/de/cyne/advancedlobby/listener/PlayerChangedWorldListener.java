@@ -3,7 +3,6 @@ package de.cyne.advancedlobby.listener;
 import de.cyne.advancedlobby.AdvancedLobby;
 import de.cyne.advancedlobby.cosmetics.Cosmetics;
 import de.cyne.advancedlobby.itembuilder.ItemBuilder;
-import de.cyne.advancedlobby.locale.Locale;
 import de.cyne.advancedlobby.misc.HiderType;
 import de.cyne.advancedlobby.misc.LocationManager;
 import de.cyne.advancedlobby.titleapi.TitleAPI;
@@ -25,8 +24,8 @@ public class PlayerChangedWorldListener implements Listener {
     public void onPlayerChangedWorld(PlayerChangedWorldEvent e) {
         Player p = e.getPlayer();
 
-        if(!AdvancedLobby.bungeecord) {
-            if(p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (AdvancedLobby.singleWorld_mode) {
+            if (p.getWorld() == AdvancedLobby.lobbyWorld) {
                 double health = AdvancedLobby.cfg.getDouble("player_join.health");
                 p.setMaxHealth(health);
                 p.setHealth(health);
@@ -80,7 +79,7 @@ public class PlayerChangedWorldListener implements Listener {
                     }
                 }
 
-                ItemBuilder teleporter = new ItemBuilder(Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.teleporter.material")), 1,
+                ItemBuilder teleporter = new ItemBuilder(AdvancedLobby.getMaterial("hotbar_items.teleporter.material"), 1,
                         (short) AdvancedLobby.cfg.getInt("hotbar_items.teleporter.subid")).setDisplayName(
                         ChatColor.translateAlternateColorCodes('&', AdvancedLobby.cfg.getString("hotbar_items.teleporter.displayname")))
                         .setLore(AdvancedLobby.cfg.getStringList("hotbar_items.teleporter.lore"));
@@ -89,7 +88,7 @@ public class PlayerChangedWorldListener implements Listener {
                     p.getInventory().setItem(AdvancedLobby.cfg.getInt("hotbar_items.teleporter.slot"), teleporter);
                 }
 
-                ItemBuilder hider = new ItemBuilder(Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.player_hider.show_all.material")),
+                ItemBuilder hider = new ItemBuilder(AdvancedLobby.getMaterial("hotbar_items.player_hider.show_all.material"),
                         1, (short) AdvancedLobby.cfg.getInt("hotbar_items.player_hider.show_all.subid"))
                         .setDisplayName(ChatColor.translateAlternateColorCodes('&',
                                 AdvancedLobby.cfg.getString("hotbar_items.player_hider.show_all.displayname")))
@@ -99,7 +98,7 @@ public class PlayerChangedWorldListener implements Listener {
                     p.getInventory().setItem(AdvancedLobby.cfg.getInt("hotbar_items.player_hider.slot"), hider);
                 }
 
-                ItemBuilder cosmetics = new ItemBuilder(Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.cosmetics.material")), 1,
+                ItemBuilder cosmetics = new ItemBuilder(AdvancedLobby.getMaterial("hotbar_items.cosmetics.material"), 1,
                         (short) AdvancedLobby.cfg.getInt("hotbar_items.cosmetics.subid")).setDisplayName(
                         ChatColor.translateAlternateColorCodes('&', AdvancedLobby.cfg.getString("hotbar_items.cosmetics.displayname")))
                         .setLore(AdvancedLobby.cfg.getStringList("hotbar_items.cosmetics.lore"));
@@ -108,7 +107,7 @@ public class PlayerChangedWorldListener implements Listener {
                     p.getInventory().setItem(AdvancedLobby.cfg.getInt("hotbar_items.cosmetics.slot"), cosmetics);
                 }
 
-                ItemBuilder no_gadget = new ItemBuilder(Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.gadget.unequipped.material")), 1,
+                ItemBuilder no_gadget = new ItemBuilder(AdvancedLobby.getMaterial("hotbar_items.gadget.unequipped.material"), 1,
                         (short) AdvancedLobby.cfg.getInt("hotbar_items.gadget.unequipped.subid")).setDisplayName(
                         ChatColor.translateAlternateColorCodes('&', AdvancedLobby.cfg.getString("hotbar_items.gadget.unequipped.displayname")))
                         .setLore(AdvancedLobby.cfg.getStringList("hotbar_items.gadget.unequipped.lore"));
@@ -118,7 +117,7 @@ public class PlayerChangedWorldListener implements Listener {
                 }
 
                 ItemBuilder silentlobby = new ItemBuilder(
-                        Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.silentlobby.deactivated.material")), 1,
+                        AdvancedLobby.getMaterial("hotbar_items.silentlobby.deactivated.material"), 1,
                         (short) AdvancedLobby.cfg.getInt("hotbar_items.silentlobby.deactivated.subid"))
                         .setDisplayName(ChatColor.translateAlternateColorCodes('&',
                                 AdvancedLobby.cfg.getString("hotbar_items.silentlobby.deactivated.displayname")))
@@ -129,7 +128,7 @@ public class PlayerChangedWorldListener implements Listener {
                 }
 
                 ItemBuilder shield = new ItemBuilder(
-                        Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.shield.deactivated.material")), 1,
+                        AdvancedLobby.getMaterial("hotbar_items.shield.deactivated.material"), 1,
                         (short) AdvancedLobby.cfg.getInt("hotbar_items.shield.deactivated.subid"))
                         .setDisplayName(ChatColor.translateAlternateColorCodes('&',
                                 AdvancedLobby.cfg.getString("hotbar_items.shield.deactivated.displayname")))
@@ -140,7 +139,7 @@ public class PlayerChangedWorldListener implements Listener {
                 }
 
                 ItemBuilder custom_item = new ItemBuilder(
-                        Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.custom_item.material")), 1,
+                        AdvancedLobby.getMaterial("hotbar_items.custom_item.material"), 1,
                         (short) AdvancedLobby.cfg.getInt("hotbar_items.custom_item.subid"))
                         .setDisplayName(ChatColor.translateAlternateColorCodes('&',
                                 AdvancedLobby.cfg.getString("hotbar_items.custom_item.displayname")))
@@ -151,24 +150,24 @@ public class PlayerChangedWorldListener implements Listener {
                 }
 
                 for (Player players : AdvancedLobby.playerHider.keySet()) {
-                    if(AdvancedLobby.playerHider.get(players) == HiderType.VIP) {
-                        if(!p.hasPermission("advancedlobby.player_hider.bypass")) {
+                    if (AdvancedLobby.playerHider.get(players) == HiderType.VIP) {
+                        if (!p.hasPermission("advancedlobby.player_hider.bypass")) {
                             players.hidePlayer(p);
                         }
                     }
-                    if(AdvancedLobby.playerHider.get(players) == HiderType.NONE) {
+                    if (AdvancedLobby.playerHider.get(players) == HiderType.NONE) {
                         players.hidePlayer(p);
                     }
                 }
 
-                for (Player players : AdvancedLobby.silentlobby) {
+                for (Player players : AdvancedLobby.silentLobby) {
                     players.hidePlayer(p);
                     p.hidePlayer(players);
                 }
 
                 if (AdvancedLobby.cfg.getBoolean("player_join.join_at_spawn")) {
                     Location location = LocationManager.getLocation(AdvancedLobby.cfg.getString("spawn_location"));
-                    if(location != null) {
+                    if (location != null) {
                         p.teleport(location);
                     }
                 }
@@ -187,36 +186,25 @@ public class PlayerChangedWorldListener implements Listener {
                     p.spigot().sendMessage(message);
                     p.sendMessage("");
                 }
-
-                if (AdvancedLobby.devMode && p.hasPermission("advancedlobby.admin")) {
-                    p.sendMessage("");
-                    p.sendMessage("§8┃ §bAdvancedLobby §8┃ §cAdvanced development mode is active.");
-                    p.sendMessage("§8┃ §bAdvancedLobby §8┃ §cIf you are not the author of this plugin, contact him.");
-                    p.sendMessage("§8┃ §bAdvancedLobby §8┃ §8§m-----------------------------------");
-                    p.sendMessage("§8┃ §bAdvancedLobby §8┃ §7Current version§8: §f" + AdvancedLobby.updater.getCurrentVersion());
-                    p.sendMessage("§8┃ §bAdvancedLobby §8┃ §7Latest published version§8: §f" + AdvancedLobby.updater.getLatestVersion());
-                    p.sendMessage("");
-                }
-
             }
 
-            if(e.getFrom() == AdvancedLobby.lobbyWorld) {
+            if (e.getFrom() == AdvancedLobby.lobbyWorld) {
                 p.setMaxHealth(20);
-               if(Cosmetics.balloons.containsKey(p)) {
-                   Bukkit.getScheduler().scheduleSyncDelayedTask(AdvancedLobby.getInstance(), () -> Cosmetics.balloons.get(p).remove(), 5L);
-               }
+                if (Cosmetics.balloons.containsKey(p)) {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(AdvancedLobby.getInstance(), () -> Cosmetics.balloons.get(p).remove(), 5L);
+                }
                 AdvancedLobby.build.remove(p);
                 AdvancedLobby.buildInventory.remove(p);
                 AdvancedLobby.fly.remove(p);
                 AdvancedLobby.playerHider.remove(p);
                 AdvancedLobby.shield.remove(p);
-                AdvancedLobby.silentlobby.remove(p);
+                AdvancedLobby.silentLobby.remove(p);
 
                 Cosmetics.hats.remove(p);
                 Cosmetics.gadgets.remove(p);
 
-                for(Player players : Bukkit.getOnlinePlayers()) {
-                    if(!AdvancedLobby.silentlobby.contains(players)) {
+                for (Player players : Bukkit.getOnlinePlayers()) {
+                    if (!AdvancedLobby.silentLobby.contains(players)) {
                         p.showPlayer(players);
                     }
                 }

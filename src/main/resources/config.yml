@@ -1,7 +1,7 @@
 #
 #  ____ ___  _  _ ____ _  _ ____ ____ ___  _    ____ ___  ___  _   _
 #  |__| |  \ |  | |__| |\ | |    |___ |  \ |    |  | |__] |__]  \_/
-#  |  | |__/  \/  |  | | \| |___ |___ |__/ |___ |__| |__] |__]   |    v1.0.6 by cyne
+#  |  | |__/  \/  |  | | \| |___ |___ |__/ |___ |__| |__] |__]   |    v1.1 by cyne
 #
 #   In many sections you can use placeholders. Either by the plugin itself or PlaceholderAPI (if installed).
 #   Visit https://www.spigotmc.org/wiki/placeholderapi-placeholders/ to see all PlaceholderAPI placeholders.
@@ -9,7 +9,7 @@
 #
 
 #General settings
-bungeecord: true
+singleworld_mode: false
 lobby_world: world
 #⮟ Set to true if you want the displaynames to be used for the messages.
 use_displaynames: false
@@ -30,12 +30,13 @@ disable_player_interaction: true
 disable_physical_player_interaction: true
 
 #Weather settings
+#➥ Possible weather types are: CLEAR, RAIN, THUNDER
 weather:
   lock_weather: true
   weather_type: CLEAR
 
 #Actionbar settings
-#➥ You can add multiple messages. - 'display_time' in seconds. | Placeholders: PlaceholderAPI
+#➥ You can add multiple messages. - "display_time" in seconds. | Placeholders: PlaceholderAPI
 actionbar:
   enabled: true
   display_time: 5
@@ -46,7 +47,7 @@ actionbar:
 #➥ Use \n to start a new line | Placeholders: PlaceholderAPI
 tablist_header_footer:
   enabled: true
-  #⮟ If activated, the tablist is refreshed every second.
+  #⮟ If activated, the tablist updates every second.
   update_tablist: true
   header: '&r\n&bAdvancedLobby &8× &7Minecraft Network &8➜ &f%server_online%&8/&f%server_max_players%&f\n &8► §7Server &8● &b%player_server% &8◄ \n'
   footer: '&r\n&7Twitter &8» §f@Unknown &8┃ &7TeamSpeak &8» &fUnknown\n'
@@ -107,18 +108,18 @@ hotbar_items:
     enabled: true
     slot: 1
     show_all:
-      material: INK_SACK
-      subid: 10
+      material: LIME_DYE
+      subid: 0
       displayname: '&aAll players visible &8× &7rightclick'
       lore: []
     show_vip:
-      material: INK_SACK
-      subid: 5
+      material: PURPLE_DYE
+      subid: 0
       displayname: '&5Only VIP-Players visible &8× &7rightclick'
       lore: []
     show_none:
-      material: INK_SACK
-      subid: 1
+      material: RED_DYE
+      subid: 0
       displayname: '&cNo players visible &8× &7rightclick'
       lore: []
   cosmetics:
@@ -132,7 +133,7 @@ hotbar_items:
     enabled: true
     slot: 7
     unequipped:
-      material: FIREWORK_CHARGE
+      material: FIREWORK_STAR
       subid: 0
       displayname: '&cNo gadget equipped'
       lore: []
@@ -157,12 +158,12 @@ hotbar_items:
     enabled: true
     slot: 5
     activated:
-      material: EYE_OF_ENDER
+      material: ENDER_EYE
       subid: 0
       displayname: '&aShield &8× &7rightclick'
       lore: []
     deactivated:
-      material: EYE_OF_ENDER
+      material: ENDER_EYE
       subid: 0
       displayname: '&cShield &8× &7rightclick'
       lore: []
@@ -184,16 +185,16 @@ inventories:
     #To add new items to the teleporter use the following template:
     #
     #example:
-    #  material: BED
+    #  material: GRASS
     #  subid: 0
-    #  displayname: '&8● &bBedWars'
+    #  displayname: '&8● &bExample'
     #  lore:
     #  - '&8&m---------------'
     #  - ' &8» &7Click to teleport'
     #  slot: 13
-    #  location: 'bedwars'
+    #  location: 'example'
     items:
-      example:
+      spawn:
         material: MAGMA_CREAM
         slot: 31
         displayname: '&8● &bSpawn'

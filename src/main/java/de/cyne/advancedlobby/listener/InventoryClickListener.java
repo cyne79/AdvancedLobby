@@ -3,6 +3,8 @@ package de.cyne.advancedlobby.listener;
 import de.cyne.advancedlobby.AdvancedLobby;
 import de.cyne.advancedlobby.cosmetics.Cosmetics;
 import de.cyne.advancedlobby.cosmetics.Cosmetics.ParticleType;
+import de.cyne.advancedlobby.crossversion.VMaterial;
+import de.cyne.advancedlobby.crossversion.VParticle;
 import de.cyne.advancedlobby.inventories.Inventories;
 import de.cyne.advancedlobby.itembuilder.ItemBuilder;
 import de.cyne.advancedlobby.locale.Locale;
@@ -19,7 +21,7 @@ public class InventoryClickListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if (AdvancedLobby.bungeecord | p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
             if (e.getCurrentItem() != null) {
                 if (e.getClickedInventory() == p.getInventory() && !AdvancedLobby.build.contains(p)) {
                     e.setCancelled(true);
@@ -27,12 +29,12 @@ public class InventoryClickListener implements Listener {
                 /*
                  * COMPASS >
                  */
-                if (e.getInventory().getTitle().equals(AdvancedLobby.getString("inventories.teleporter.title"))) {
+                if (e.getView().getTitle().equals(AdvancedLobby.getString("inventories.teleporter.title"))) {
                     e.setCancelled(true);
 
                     for (String item : AdvancedLobby.cfg.getConfigurationSection("inventories.teleporter.items").getKeys(false)) {
-                        Material material = Material
-                                .getMaterial(AdvancedLobby.cfg.getString("inventories.teleporter.items." + item + ".material"));
+                        Material material = AdvancedLobby
+                                .getMaterial("inventories.teleporter.items." + item + ".material");
                         if (e.getCurrentItem().getType() == material) {
 
                             Location location = LocationManager.getLocation(
@@ -50,11 +52,11 @@ public class InventoryClickListener implements Listener {
                             }
                             p.teleport(location);
                             AdvancedLobby.playSound(p, p.getLocation(), "teleporter.teleport");
-                            p.spigot().playEffect(location, Effect.WITCH_MAGIC, 1, 1, 0, 0, 0, 0.1f, 64, 8);
+                            VParticle.spawnParticle(p, "SPELL_WITCH", location, 64, 0.0f, 0.0f, 0.0f, 0.1f);
                             for (Player players : Bukkit.getOnlinePlayers()) {
                                 if (p != players) {
-                                    if (!AdvancedLobby.playerHider.containsKey(players) && !AdvancedLobby.silentlobby.contains(players) && !AdvancedLobby.silentlobby.contains(p)) {
-                                        players.spigot().playEffect(location, Effect.WITCH_MAGIC, 1, 1, 0, 0, 0, 0.1f, 64, 8);
+                                    if (!AdvancedLobby.playerHider.containsKey(players) && !AdvancedLobby.silentLobby.contains(players) && !AdvancedLobby.silentLobby.contains(p)) {
+                                        VParticle.spawnParticle(players, "SPELL_WITCH", location, 64, 0.0f, 0.0f, 0.0f, 0.1f);
                                     }
                                 }
                             }
@@ -69,7 +71,7 @@ public class InventoryClickListener implements Listener {
                 /*
                  * COSMETICS >
                  */
-                if (e.getInventory().getTitle().equals(AdvancedLobby.getString("inventories.cosmetics.title"))) {
+                if (e.getView().getTitle().equals(AdvancedLobby.getString("inventories.cosmetics.title"))) {
                     e.setCancelled(true);
 
                     if (e.getCurrentItem().getType() == Material.PUMPKIN) {
@@ -84,7 +86,7 @@ public class InventoryClickListener implements Listener {
                         return;
                     }
 
-                    if (e.getCurrentItem().getType() == Material.LEASH) {
+                    if (e.getCurrentItem().getType() == VMaterial.LEAD.getType()) {
                         Inventories.openCosmetics_balloons(p);
                         AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.change_page");
                         return;
@@ -96,11 +98,11 @@ public class InventoryClickListener implements Listener {
                         return;
                     }
 
-                    if (e.getCurrentItem().getType() == Material.IRON_BOOTS) {
+                    /**if (e.getCurrentItem().getType() == Material.IRON_BOOTS) {
                         Inventories.openCosmetics_wardrobe(p);
                         AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.change_page");
                         return;
-                    }
+                    }**/
 
                 }
                 /*
@@ -110,18 +112,18 @@ public class InventoryClickListener implements Listener {
                 /*
                  * COSMETICS - HATS >
                  */
-                if (e.getInventory().getTitle().equals(AdvancedLobby.getString("inventories.cosmetics_hats.title"))) {
+                if (e.getView().getTitle().equals(AdvancedLobby.getString("inventories.cosmetics_hats.title"))) {
                     e.setCancelled(true);
-                    if (e.getCurrentItem().getType() == Material.SKULL_ITEM) {
+                    if (e.getCurrentItem().getType() == VMaterial.PLAYER_HEAD.getType()) {
                         Inventories.openCosmetics(p);
                         AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.change_page");
                         return;
                     }
 
-                    if (e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) return;
+                    if (e.getCurrentItem().getType() == VMaterial.BLACK_STAINED_GLASS_PANE.getType()) return;
                     if (e.getCurrentItem().getType() == Material.AIR) return;
 
-                    if (e.getCurrentItem().getType() == Material.INK_SACK) {
+                    if (e.getCurrentItem().getType() == VMaterial.RED_DYE.getType()) {
                         AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.disable_cosmetic");
                         p.closeInventory();
                         if (Cosmetics.hats.containsKey(p)) {
@@ -146,16 +148,16 @@ public class InventoryClickListener implements Listener {
                 /*
                  * COSMETICS - PARTICLES >
                  */
-                if (e.getInventory().getTitle().equals(AdvancedLobby.getString("inventories.cosmetics_particles.title"))) {
+                if (e.getView().getTitle().equals(AdvancedLobby.getString("inventories.cosmetics_particles.title"))) {
                     e.setCancelled(true);
 
-                    if (e.getCurrentItem().getType() == Material.SKULL_ITEM) {
+                    if (e.getCurrentItem().getType() == VMaterial.PLAYER_HEAD.getType()) {
                         Inventories.openCosmetics(p);
                         AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.change_page");
                         return;
                     }
 
-                    if (e.getCurrentItem().getType() == Material.INK_SACK) {
+                    if (e.getCurrentItem().getType() == VMaterial.RED_DYE.getType()) {
                         p.closeInventory();
                         AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.disable_cosmetic");
                         if (Cosmetics.particles.containsKey(p)) {
@@ -167,7 +169,7 @@ public class InventoryClickListener implements Listener {
                         return;
                     }
 
-                    if (e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) return;
+                    if (e.getCurrentItem().getType() == VMaterial.BLACK_STAINED_GLASS_PANE.getType()) return;
                     if (e.getCurrentItem().getType() == Material.AIR) return;
 
                     AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.equip_cosmetic");
@@ -181,7 +183,7 @@ public class InventoryClickListener implements Listener {
                         p.sendMessage(Locale.COSMETICS_PARTICLES_NO_PERMISSION.getMessage(p).replace("%particles%", AdvancedLobby.getString("inventories.cosmetics_particles.heart_particles.displayname")));
                         return;
                     }
-                    if (e.getCurrentItem().getType() == Material.RECORD_10) {
+                    if (e.getCurrentItem().getType() == VMaterial.MUSIC_DISC_STRAD.getType()) {
                         p.closeInventory();
                         if (p.hasPermission("advancedlobby.cosmetics.particles.music")) {
                             Cosmetics.particles.put(p, ParticleType.MUSIC);
@@ -191,7 +193,7 @@ public class InventoryClickListener implements Listener {
                         p.sendMessage(Locale.COSMETICS_PARTICLES_NO_PERMISSION.getMessage(p).replace("%particles%", AdvancedLobby.getString("inventories.cosmetics_particles.music_particles.displayname")));
                         return;
                     }
-                    if (e.getCurrentItem().getType() == Material.FIREBALL) {
+                    if (e.getCurrentItem().getType() == VMaterial.FIRE_CHARGE.getType()) {
                         p.closeInventory();
                         if (p.hasPermission("advancedlobby.cosmetics.particles.flames")) {
                             Cosmetics.particles.put(p, ParticleType.FLAMES);
@@ -229,16 +231,16 @@ public class InventoryClickListener implements Listener {
                 /*
                  * COSMETICS - BALLOONS >
                  */
-                if (e.getInventory().getTitle().equals(AdvancedLobby.getString("inventories.cosmetics_balloons.title"))) {
+                if (e.getView().getTitle().equals(AdvancedLobby.getString("inventories.cosmetics_balloons.title"))) {
                     e.setCancelled(true);
 
-                    if (e.getCurrentItem().getType() == Material.SKULL_ITEM) {
+                    if (e.getCurrentItem().getType() == VMaterial.PLAYER_HEAD.getType()) {
                         Inventories.openCosmetics(p);
                         AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.change_page");
                         return;
                     }
 
-                    if (e.getCurrentItem().getType() == Material.INK_SACK) {
+                    if (e.getCurrentItem().getType() == VMaterial.RED_DYE.getType()) {
                         p.closeInventory();
                         AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.disable_cosmetic");
                         if (Cosmetics.balloons.containsKey(p)) {
@@ -251,7 +253,7 @@ public class InventoryClickListener implements Listener {
                         return;
                     }
 
-                    if (e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) return;
+                    if (e.getCurrentItem().getType() == VMaterial.BLACK_STAINED_GLASS_PANE.getType()) return;
                     if (e.getCurrentItem().getType() == Material.AIR) return;
 
 
@@ -259,11 +261,11 @@ public class InventoryClickListener implements Listener {
                         Cosmetics.balloons.get(p).remove();
                         Cosmetics.balloons.remove(p);
                     }
-
                     AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.equip_cosmetic");
 
                     //yellow clay, byte 4
-                    if (e.getCurrentItem().getType() == Material.STAINED_CLAY && e.getCurrentItem().getDurability() == 4) {
+                    //if (e.getCurrentItem().getType() == VMaterial.YELLOW_TERRACOTTA.getType() && e.getCurrentItem().getDurability() == (VMaterial.YELLOW_TERRACOTTA.getSubId() | 0)) {
+                    if (VMaterial.YELLOW_TERRACOTTA.equals(e.getCurrentItem())) {
                         p.closeInventory();
                         if (p.hasPermission("advancedlobby.cosmetics.balloons.yellow")) {
                             Cosmetics.equipBalloon(p, Cosmetics.BalloonType.YELLOW);
@@ -274,7 +276,8 @@ public class InventoryClickListener implements Listener {
                         return;
                     }
                     //red clay, byte 14
-                    if (e.getCurrentItem().getType() == Material.STAINED_CLAY && e.getCurrentItem().getDurability() == 14) {
+                    //if (e.getCurrentItem().getType() == VMaterial.RED_TERRACOTTA.getType() && e.getCurrentItem().getDurability() == (VMaterial.RED_TERRACOTTA.getSubId() | 0)) {
+                    if (VMaterial.RED_TERRACOTTA.equals(e.getCurrentItem())) {
                         p.closeInventory();
                         if (p.hasPermission("advancedlobby.cosmetics.balloons.red")) {
                             Cosmetics.equipBalloon(p, Cosmetics.BalloonType.RED);
@@ -285,7 +288,8 @@ public class InventoryClickListener implements Listener {
                         return;
                     }
                     //green clay, byte 5
-                    if (e.getCurrentItem().getType() == Material.STAINED_CLAY && e.getCurrentItem().getDurability() == 5) {
+                    //if (e.getCurrentItem().getType() == VMaterial.LIME_TERRACOTTA.getType() && e.getCurrentItem().getDurability() == (VMaterial.LIME_TERRACOTTA.getSubId() | 0)) {
+                    if (VMaterial.LIME_TERRACOTTA.equals(e.getCurrentItem())) {
                         p.closeInventory();
                         if (p.hasPermission("advancedlobby.cosmetics.balloons.green")) {
                             Cosmetics.equipBalloon(p, Cosmetics.BalloonType.GREEN);
@@ -296,7 +300,8 @@ public class InventoryClickListener implements Listener {
                         return;
                     }
                     //blue clay, byte 3
-                    if (e.getCurrentItem().getType() == Material.STAINED_CLAY && e.getCurrentItem().getDurability() == 3) {
+                    //if (e.getCurrentItem().getType() == VMaterial.LIGHT_BLUE_TERRACOTTA.getType() && e.getCurrentItem().getDurability() == (VMaterial.LIGHT_BLUE_TERRACOTTA.getSubId() | 0)) {
+                    if (VMaterial.LIGHT_BLUE_TERRACOTTA.equals(e.getCurrentItem())) {
                         p.closeInventory();
                         if (p.hasPermission("advancedlobby.cosmetics.balloons.blue")) {
                             Cosmetics.equipBalloon(p, Cosmetics.BalloonType.BLUE);
@@ -351,7 +356,6 @@ public class InventoryClickListener implements Listener {
                         return;
                     }
 
-
                 }
                 /*
                  * COSMETICS - BALLOONS <
@@ -360,23 +364,23 @@ public class InventoryClickListener implements Listener {
                 /*
                  * COSMETICS - GADGETS >
                  */
-                if (e.getInventory().getTitle().equals(AdvancedLobby.getString("inventories.cosmetics_gadgets.title"))) {
+                if (e.getView().getTitle().equals(AdvancedLobby.getString("inventories.cosmetics_gadgets.title"))) {
                     e.setCancelled(true);
-                    if (e.getCurrentItem().getType() == Material.SKULL_ITEM) {
+                    if (e.getCurrentItem().getType() == VMaterial.PLAYER_HEAD.getType()) {
                         Inventories.openCosmetics(p);
                         AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.change_page");
                         return;
                     }
 
-                    if (e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) return;
+                    if (e.getCurrentItem().getType() == VMaterial.BLACK_STAINED_GLASS_PANE.getType()) return;
                     if (e.getCurrentItem().getType() == Material.AIR) return;
 
-                    if (e.getCurrentItem().getType() == Material.INK_SACK) {
+                    if (e.getCurrentItem().getType() == VMaterial.RED_DYE.getType()) {
                         AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.disable_cosmetic");
                         p.closeInventory();
                         if (Cosmetics.gadgets.containsKey(p)) {
                             Cosmetics.gadgets.remove(p);
-                            ItemBuilder no_gadget = new ItemBuilder(Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.gadget.unequipped.material")), 1,
+                            ItemBuilder no_gadget = new ItemBuilder(AdvancedLobby.getMaterial("hotbar_items.gadget.unequipped.material"), 1,
                                     (short) AdvancedLobby.cfg.getInt("hotbar_items.gadget.unequipped.subid")).setDisplayName(
                                     ChatColor.translateAlternateColorCodes('&', AdvancedLobby.cfg.getString("hotbar_items.gadget.unequipped.displayname")))
                                     .setLore(AdvancedLobby.cfg.getStringList("hotbar_items.gadget.unequipped.lore"));

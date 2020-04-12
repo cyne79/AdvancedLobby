@@ -21,7 +21,7 @@ public class Updater {
     }
 
     public enum UpdateResult {
-        UPDATE_AVAILABLE, NO_UPDATE, VERSION_AHEAD, CONNECTION_ERROR, DISABLED
+        UPDATE_AVAILABLE, NO_UPDATE, CONNECTION_ERROR
     }
 
     public void checkLatestVersion() {
@@ -35,7 +35,6 @@ public class Updater {
     }
 
     public void compareVersions() {
-
         long currentVersionCompact = Long.parseLong(currentVersion.replace(".", ""));
         long latestVersionCompact = Long.parseLong(latestVersion.replace(".", ""));
 
@@ -43,26 +42,18 @@ public class Updater {
             this.setUpdateResult(UpdateResult.NO_UPDATE);
             return;
         }
-        if (currentVersionCompact < latestVersionCompact) {
-            //version(s) behind
-            this.setUpdateResult(UpdateResult.UPDATE_AVAILABLE);
-            return;
-        }
-        if (currentVersionCompact > latestVersionCompact) {
-            //version(s) ahead
-            this.setUpdateResult(UpdateResult.VERSION_AHEAD);
-            return;
-        }
         this.setUpdateResult(UpdateResult.UPDATE_AVAILABLE);
     }
 
     public void run() {
         AdvancedLobby.getInstance().getLogger().info("Searching for an update on 'spigotmc.org'..");
-        checkLatestVersion();
-        compareVersions();
+
+        this.checkLatestVersion();
+        this.compareVersions();
+
         switch (this.updateResult) {
             case UPDATE_AVAILABLE:
-                AdvancedLobby.getInstance().getLogger().info("There was a new version found. It is recommended to upgrade. (Visit spigotmc.org)");
+                AdvancedLobby.getInstance().getLogger().info("There was a new version found. It is recommended to update. (Visit spigotmc.org)");
                 AdvancedLobby.updateAvailable = true;
                 break;
 
@@ -71,17 +62,9 @@ public class Updater {
                 AdvancedLobby.updateAvailable = false;
                 break;
 
-            case VERSION_AHEAD:
-                AdvancedLobby.getInstance().getLogger().info("Version(s) ahead! Advanced development mode activated.");
-                AdvancedLobby.devMode = true;
-                break;
-
             case CONNECTION_ERROR:
                 AdvancedLobby.getInstance().getLogger().warning("Could not connect to spigotmc.org. Retrying soon.");
                 AdvancedLobby.updateAvailable = false;
-                break;
-
-            case DISABLED:
                 break;
 
             default:
@@ -91,19 +74,7 @@ public class Updater {
         }
     }
 
-    public String getLatestVersion() {
-        return this.latestVersion;
-    }
-
-    public String getCurrentVersion() {
-        return this.currentVersion;
-    }
-
-    public UpdateResult getUpdateResult() {
-        return updateResult;
-    }
-
-    public void setUpdateResult(UpdateResult updateResult) {
+    private void setUpdateResult(UpdateResult updateResult) {
         this.updateResult = updateResult;
     }
 

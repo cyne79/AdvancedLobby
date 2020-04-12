@@ -11,7 +11,7 @@ public class BlockPlaceListener implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
         Player p = e.getPlayer();
-        if (AdvancedLobby.bungeecord | p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
             if (!AdvancedLobby.build.contains(p)) {
                 e.setCancelled(true);
             }

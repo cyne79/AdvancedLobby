@@ -3,6 +3,7 @@ package de.cyne.advancedlobby;
 import de.cyne.advancedlobby.commands.*;
 import de.cyne.advancedlobby.cosmetics.Cosmetics;
 import de.cyne.advancedlobby.listener.*;
+import de.cyne.advancedlobby.metrics.Metrics;
 import de.cyne.advancedlobby.misc.ActionbarScheduler;
 import de.cyne.advancedlobby.misc.HiderType;
 import de.cyne.advancedlobby.misc.Updater;
@@ -40,23 +41,23 @@ public class AdvancedLobby extends JavaPlugin {
     public static ArrayList<Player> build = new ArrayList<>();
     public static ArrayList<Player> fly = new ArrayList<>();
     public static ArrayList<Player> shield = new ArrayList<>();
-    public static ArrayList<Player> silentlobby = new ArrayList<>();
+    public static ArrayList<Player> silentLobby = new ArrayList<>();
     public static HashMap<Player, ItemStack[]> buildInventory = new HashMap<>();
     public static HashMap<Player, HiderType> playerHider = new HashMap<>();
 
-    public static boolean globalmute = false;
-
+    public static boolean globalMute = false;
     public static boolean updateAvailable = false;
-    public static boolean devMode = false;
     public static boolean placeholderApi = false;
-    public static boolean titleApi_oldVersion = false;
-    public static String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 
-    public static boolean bungeecord;
+    public static boolean singleWorld_mode;
     public static World lobbyWorld;
 
     public static ActionbarScheduler scheduler;
     public static Updater updater;
+
+    public static HashMap<String, ErrorType> errors = new HashMap<>();
+
+    public Metrics metrics;
 
     @Override
     public void onEnable() {
@@ -65,6 +66,7 @@ public class AdvancedLobby extends JavaPlugin {
 
         this.createFiles();
         this.loadFiles();
+
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             AdvancedLobby.getInstance().log("PlaceholderAPI was found. Connected.");
             placeholderApi = true;
@@ -73,13 +75,15 @@ public class AdvancedLobby extends JavaPlugin {
         updater = new Updater(35799);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(AdvancedLobby.getInstance(), () -> {
             updater.run();
-        }, 0L, 20*60*60*24); //once a day
+        }, 0L, 20 * 60 * 60 * 24); //once a day
 
-        if(cfg.getBoolean("actionbar.enabled")) {
+        if (cfg.getBoolean("actionbar.enabled")) {
             actionbarMessages.addAll(AdvancedLobby.cfg.getStringList("actionbar.messages"));
             scheduler = new ActionbarScheduler(actionbarMessages);
             scheduler.start();
         }
+
+        singleWorld_mode = AdvancedLobby.cfg.getBoolean("singleworld_mode");
 
         this.prepareLobbyWorld();
 
@@ -88,9 +92,8 @@ public class AdvancedLobby extends JavaPlugin {
 
         Cosmetics.startBalloonTask();
 
-        if(version.contains("v1_8")) {
-            titleApi_oldVersion = true;
-        }
+        metrics = new Metrics(AdvancedLobby.getInstance(), 7014);
+        metrics.addCustomChart(new Metrics.SimplePie("singleworld_mode", () -> singleWorld_mode ? "enabled" : "disabled"));
     }
 
     @Override
@@ -103,16 +106,35 @@ public class AdvancedLobby extends JavaPlugin {
     }
 
     private void prepareLobbyWorld() {
-        if (!AdvancedLobby.bungeecord) {
+        World world = null;
+
+        if (singleWorld_mode) {
             if (Bukkit.getWorld(AdvancedLobby.cfg.getString("lobby_world")) == null) {
                 AdvancedLobby.getInstance().log("Lobby world not found, creating..");
                 Bukkit.createWorld(new WorldCreator(AdvancedLobby.cfg.getString("lobby_world")));
             }
             AdvancedLobby.lobbyWorld = Bukkit.getWorld(AdvancedLobby.cfg.getString("lobby_world"));
-            lobbyWorld.setWeatherDuration(0);
-            lobbyWorld.setThunderDuration(0);
-            lobbyWorld.setStorm(false);
-            lobbyWorld.setThundering(false);
+            world = lobbyWorld;
+        } else {
+            for (World worlds : Bukkit.getWorlds()) {
+                world = worlds;
+            }
+        }
+
+        String weatherType = AdvancedLobby.cfg.getString("weather.weather_type").toUpperCase();
+        switch (weatherType) {
+            case ("CLEAR"):
+                world.setStorm(false);
+                world.setThundering(false);
+                break;
+            case ("RAIN"):
+                world.setStorm(true);
+                world.setThundering(false);
+                break;
+            case ("THUNDER"):
+                world.setStorm(true);
+                world.setThundering(true);
+                break;
         }
     }
 
@@ -123,7 +145,7 @@ public class AdvancedLobby extends JavaPlugin {
         AdvancedLobby.getInstance().getCommand("fly").setExecutor(new FlyCommand());
         AdvancedLobby.getInstance().getCommand("gamemode").setExecutor(new GameModeCommand());
         AdvancedLobby.getInstance().getCommand("globalmute").setExecutor(new GlobalMuteCommand());
-        if (!bungeecord) {
+        if (singleWorld_mode) {
             AdvancedLobby.getInstance().getCommand("lobby").setExecutor(new LobbyCommand());
         }
         AdvancedLobby.getInstance().getCommand("teleportall").setExecutor(new TeleportAllCommand());
@@ -149,12 +171,13 @@ public class AdvancedLobby extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerInteractEntityListener(), AdvancedLobby.getInstance());
         Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(), AdvancedLobby.getInstance());
         Bukkit.getPluginManager().registerEvents(new PlayerItemConsumeListener(), AdvancedLobby.getInstance());
+        Bukkit.getPluginManager().registerEvents(new PlayerItemDamageListener(), AdvancedLobby.getInstance());
         Bukkit.getPluginManager().registerEvents(new PlayerItemHeldListener(), AdvancedLobby.getInstance());
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), AdvancedLobby.getInstance());
         Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(), AdvancedLobby.getInstance());
         Bukkit.getPluginManager().registerEvents(new PlayerPickupItemListener(), AdvancedLobby.getInstance());
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), AdvancedLobby.getInstance());
-        if(!version.contains("v1_8")) {
+        if (!isOneEightVersion()) {
             Bukkit.getPluginManager().registerEvents(new PlayerSwapHandItemsListener(), AdvancedLobby.getInstance());
         }
         Bukkit.getPluginManager().registerEvents(new PlayerTeleportListener(), AdvancedLobby.getInstance());
@@ -219,9 +242,34 @@ public class AdvancedLobby extends JavaPlugin {
                         AdvancedLobby.cfgS.getInt(path + ".pitch"));
             }
         } catch (Exception ex) {
-            AdvancedLobby.getInstance().log("§cSound error @ '" + path + "'");
+            AdvancedLobby.errors.put(path, ErrorType.SOUND);
         }
+    }
 
+    public static Material getMaterial(String materialString) {
+        try {
+            Material material = Material.getMaterial(AdvancedLobby.cfg.getString(materialString));
+            if (material == null) {
+                AdvancedLobby.errors.put(materialString, ErrorType.MATERIAL);
+                return Material.BARRIER;
+            }
+            return material;
+        } catch (Exception ex) {
+            AdvancedLobby.errors.put(materialString, ErrorType.MATERIAL);
+            return Material.BARRIER;
+        }
+    }
+
+    public static String getVersion() {
+        return Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+    }
+
+    public static boolean isLegacyVersion() {
+        return Integer.parseInt(getVersion().split("_")[1]) <= 12;
+    }
+
+    public static boolean isOneEightVersion() {
+        return Integer.parseInt(getVersion().split("_")[1]) == 8;
     }
 
     public static String getString(String path) {
@@ -242,6 +290,10 @@ public class AdvancedLobby extends JavaPlugin {
 
     public void log(String message) {
         Bukkit.getConsoleSender().sendMessage("[" + getInstance().getDescription().getName() + "] " + message);
+    }
+
+    public enum ErrorType {
+        SOUND, MATERIAL
     }
 
     public static AdvancedLobby getInstance() {

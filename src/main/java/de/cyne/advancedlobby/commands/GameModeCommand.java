@@ -25,19 +25,23 @@ public class GameModeCommand implements CommandExecutor {
             }
             if (args.length == 1) {
                 GameMode gameMode;
-                String mode = args[0];
+                String mode = args[0].toLowerCase();
 
                 switch (mode) {
                     case ("0"):
+                    case ("survival"):
                         gameMode = GameMode.SURVIVAL;
                         break;
                     case ("1"):
+                    case ("creative"):
                         gameMode = GameMode.CREATIVE;
                         break;
                     case ("2"):
+                    case ("adventure"):
                         gameMode = GameMode.ADVENTURE;
                         break;
                     case ("3"):
+                    case ("spectator"):
                         gameMode = GameMode.SPECTATOR;
                         break;
                     default:

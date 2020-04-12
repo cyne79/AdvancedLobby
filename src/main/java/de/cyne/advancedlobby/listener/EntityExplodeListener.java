@@ -9,7 +9,7 @@ public class EntityExplodeListener implements Listener {
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent e) {
-        if (AdvancedLobby.bungeecord | e.getEntity().getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.singleWorld_mode | e.getEntity().getWorld() == AdvancedLobby.lobbyWorld) {
             e.setCancelled(true);
             e.blockList().clear();
         }

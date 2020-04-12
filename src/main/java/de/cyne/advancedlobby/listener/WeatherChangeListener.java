@@ -9,8 +9,10 @@ public class WeatherChangeListener implements Listener {
 
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent e) {
-        if (AdvancedLobby.bungeecord | e.getWorld() == AdvancedLobby.lobbyWorld) {
-            e.setCancelled(true);
+        if (!AdvancedLobby.singleWorld_mode | e.getWorld() == AdvancedLobby.lobbyWorld) {
+            if(AdvancedLobby.cfg.getBoolean("weather.lock_weather")) {
+                e.setCancelled(true);
+            }
         }
     }
 

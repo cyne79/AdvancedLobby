@@ -1,7 +1,6 @@
 package de.cyne.advancedlobby.commands;
 
 import de.cyne.advancedlobby.AdvancedLobby;
-import de.cyne.advancedlobby.inventories.Inventories;
 import de.cyne.advancedlobby.locale.Locale;
 import de.cyne.advancedlobby.misc.LocationManager;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -29,6 +28,10 @@ public class AdvancedLobbyCommand implements CommandExecutor {
                     if (args[0].equalsIgnoreCase("reload") | args[0].equalsIgnoreCase("rl") && sender.hasPermission("advancedlobby.reload")) {
                         reloadServer(sender);
                     }
+                    if (args[0].equalsIgnoreCase("errors")) {
+                        this.sendErrors(sender);
+                        return true;
+                    }
                     return true;
                 }
             }
@@ -45,8 +48,12 @@ public class AdvancedLobbyCommand implements CommandExecutor {
                     reloadServer(sender);
                     return true;
                 }
-                if (args[0].equalsIgnoreCase("settings")) {
+                /**if (args[0].equalsIgnoreCase("settings")) {
                     Inventories.openAdvacedLobbySettings(p);
+                    return true;
+                }**/
+                if (args[0].equalsIgnoreCase("errors")) {
+                    this.sendErrors(p);
                     return true;
                 }
                 if (args[0].equalsIgnoreCase("location") | args[0].equalsIgnoreCase("loc")) {
@@ -195,6 +202,21 @@ public class AdvancedLobbyCommand implements CommandExecutor {
         sender.sendMessage("");
     }
 
+    private void sendErrors(CommandSender sender) {
+        sender.sendMessage("");
+        sender.sendMessage("§8┃ §4● §8┃ §cErrors §8× §7Total§8: §f" + AdvancedLobby.errors.size());
+        sender.sendMessage("§8┃ §4● §8┃ ");
+
+        if (AdvancedLobby.errors.isEmpty()) {
+            sender.sendMessage("§8┃ §4● §8┃ §8- §aThere are no errors§8.");
+        }
+
+        for (String error : AdvancedLobby.errors.keySet()) {
+            sender.sendMessage("§8┃ §4● §8┃ §8- §7Couldn't find §f" + AdvancedLobby.errors.get(error) + "§8: §c" + error);
+        }
+        sender.sendMessage("");
+    }
+
     private void sendPluginHelp(CommandSender sender) {
         sender.sendMessage("");
         sender.sendMessage("§8┃ §b● §8┃ §bAdvancedLobby §8× §av"
@@ -202,6 +224,7 @@ public class AdvancedLobbyCommand implements CommandExecutor {
         sender.sendMessage("§8┃ §b● §8┃ ");
         sender.sendMessage("§8┃ §b● §8┃ §8/§fadvancedlobby reload §8- §7Reload the configuration files");
         sender.sendMessage("§8┃ §b● §8┃ §8/§fadvancedlobby location §8- §7Manage the locations");
+        sender.sendMessage("§8┃ §b● §8┃ §8/§fadvancedlobby errors §8- §7List all errors");
         sender.sendMessage("");
     }
 

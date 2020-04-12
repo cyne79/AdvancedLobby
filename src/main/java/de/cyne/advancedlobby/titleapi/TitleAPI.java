@@ -1,8 +1,7 @@
 package de.cyne.advancedlobby.titleapi;
 
-import com.sun.org.apache.xerces.internal.impl.dv.xs.AnySimpleDV;
 import de.cyne.advancedlobby.AdvancedLobby;
-import org.bukkit.Bukkit;
+import de.cyne.advancedlobby.misc.ReflectionHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -12,26 +11,26 @@ import java.lang.reflect.Field;
 public class TitleAPI {
 
     public static void sendActionBar(Player player, String message) {
-        if (AdvancedLobby.titleApi_oldVersion) {
+        if (AdvancedLobby.isOneEightVersion()) {
             try {
-                Object action = TitleAPI.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
+                Object action = ReflectionHelper.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
                         .getMethod("a", String.class).invoke(null, "{\"text\":\"" + message + "\"}");
-                Constructor<?> actionConstructor = TitleAPI.getNMSClass("PacketPlayOutChat")
-                        .getConstructor(new Class[]{TitleAPI.getNMSClass("IChatBaseComponent"), Byte.TYPE});
+                Constructor<?> actionConstructor = ReflectionHelper.getNMSClass("PacketPlayOutChat")
+                        .getConstructor(new Class[]{ReflectionHelper.getNMSClass("IChatBaseComponent"), Byte.TYPE});
                 Object packet = actionConstructor.newInstance(new Object[]{action, (byte) 2});
-                sendPacket(player, packet);
+                ReflectionHelper.sendPacket(player, packet);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         } else {
             try {
                 Object packet;
-                Class<?> packetPlayOutChatClass = TitleAPI.getNMSClass("PacketPlayOutChat");
+                Class<?> packetPlayOutChatClass = ReflectionHelper.getNMSClass("PacketPlayOutChat");
 
-                Class<?> chatComponentTextClass = TitleAPI.getNMSClass("ChatComponentText");
-                Class<?> iChatBaseComponentClass = TitleAPI.getNMSClass("IChatBaseComponent");
+                Class<?> chatComponentTextClass = ReflectionHelper.getNMSClass("ChatComponentText");
+                Class<?> iChatBaseComponentClass = ReflectionHelper.getNMSClass("IChatBaseComponent");
                 try {
-                    Class<?> chatMessageTypeClass = Class.forName("net.minecraft.server." + AdvancedLobby.version + ".ChatMessageType");
+                    Class<?> chatMessageTypeClass = Class.forName("net.minecraft.server." + AdvancedLobby.getVersion() + ".ChatMessageType");
                     Object[] chatMessageTypes = chatMessageTypeClass.getEnumConstants();
                     Object chatMessageType = null;
                     for (Object obj : chatMessageTypes) {
@@ -45,7 +44,7 @@ public class TitleAPI {
                     Object chatCompontentText = chatComponentTextClass.getConstructor(new Class<?>[]{String.class}).newInstance(message);
                     packet = packetPlayOutChatClass.getConstructor(new Class<?>[]{iChatBaseComponentClass, byte.class}).newInstance(chatCompontentText, (byte) 2);
                 }
-                sendPacket(player, packet);
+                ReflectionHelper.sendPacket(player, packet);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -62,11 +61,11 @@ public class TitleAPI {
             footer = "";
         footer = ChatColor.translateAlternateColorCodes('&', footer);
         try {
-            Object tabHeader = TitleAPI.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
+            Object tabHeader = ReflectionHelper.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
                     .getMethod("a", String.class).invoke(null, "{\"text\":\"" + header + "\"}");
-            Object tabFooter = TitleAPI.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
+            Object tabFooter = ReflectionHelper.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
                     .getMethod("a", String.class).invoke(null, "{\"text\":\"" + footer + "\"}");
-            Constructor<?> titleConstructor = TitleAPI.getNMSClass("PacketPlayOutPlayerListHeaderFooter")
+            Constructor<?> titleConstructor = ReflectionHelper.getNMSClass("PacketPlayOutPlayerListHeaderFooter")
                     .getConstructor();
             Object packet = titleConstructor.newInstance();
             try {
@@ -84,7 +83,7 @@ public class TitleAPI {
                 bField.setAccessible(true);
                 bField.set(packet, tabFooter);
             }
-            sendPacket(player, packet);
+            ReflectionHelper.sendPacket(player, packet);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -94,78 +93,57 @@ public class TitleAPI {
                                  String subtitle) {
         try {
             if (title != null) {
-                Object e = TitleAPI.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TIMES")
+                Object e = ReflectionHelper.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TIMES")
                         .get((Object) null);
-                Object chatTitle = TitleAPI.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
+                Object chatTitle = ReflectionHelper.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
                         .getMethod("a", new Class[]{String.class})
                         .invoke((Object) null, new Object[]{"{\"text\":\"" + title + "\"}"});
-                Constructor<?> subtitleConstructor = TitleAPI.getNMSClass("PacketPlayOutTitle")
+                Constructor<?> subtitleConstructor = ReflectionHelper.getNMSClass("PacketPlayOutTitle")
                         .getConstructor(new Class[]{
-                                TitleAPI.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0],
-                                TitleAPI.getNMSClass("IChatBaseComponent"), Integer.TYPE, Integer.TYPE, Integer.TYPE});
+                                ReflectionHelper.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0],
+                                ReflectionHelper.getNMSClass("IChatBaseComponent"), Integer.TYPE, Integer.TYPE, Integer.TYPE});
                 Object titlePacket = subtitleConstructor
                         .newInstance(new Object[]{e, chatTitle, fadeIn, stay, fadeOut});
-                sendPacket(player, titlePacket);
+                ReflectionHelper.sendPacket(player, titlePacket);
 
-                e = TitleAPI.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TITLE")
+                e = ReflectionHelper.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TITLE")
                         .get((Object) null);
-                chatTitle = TitleAPI.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
+                chatTitle = ReflectionHelper.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
                         .getMethod("a", new Class[]{String.class})
                         .invoke((Object) null, new Object[]{"{\"text\":\"" + title + "\"}"});
-                subtitleConstructor = TitleAPI.getNMSClass("PacketPlayOutTitle").getConstructor(
-                        new Class[]{TitleAPI.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0],
-                                TitleAPI.getNMSClass("IChatBaseComponent")});
+                subtitleConstructor = ReflectionHelper.getNMSClass("PacketPlayOutTitle").getConstructor(
+                        new Class[]{ReflectionHelper.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0],
+                                ReflectionHelper.getNMSClass("IChatBaseComponent")});
                 titlePacket = subtitleConstructor.newInstance(new Object[]{e, chatTitle});
-                sendPacket(player, titlePacket);
+                ReflectionHelper.sendPacket(player, titlePacket);
             }
             if (subtitle != null) {
-                Object e = TitleAPI.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TIMES")
+                Object e = ReflectionHelper.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TIMES")
                         .get((Object) null);
-                Object chatSubtitle = TitleAPI.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
+                Object chatSubtitle = ReflectionHelper.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
                         .getMethod("a", new Class[]{String.class})
                         .invoke((Object) null, new Object[]{"{\"text\":\"" + title + "\"}"});
-                Constructor<?> subtitleConstructor = TitleAPI.getNMSClass("PacketPlayOutTitle")
+                Constructor<?> subtitleConstructor = ReflectionHelper.getNMSClass("PacketPlayOutTitle")
                         .getConstructor(new Class[]{
-                                TitleAPI.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0],
-                                TitleAPI.getNMSClass("IChatBaseComponent"), Integer.TYPE, Integer.TYPE, Integer.TYPE});
+                                ReflectionHelper.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0],
+                                ReflectionHelper.getNMSClass("IChatBaseComponent"), Integer.TYPE, Integer.TYPE, Integer.TYPE});
                 Object subtitlePacket = subtitleConstructor
                         .newInstance(new Object[]{e, chatSubtitle, fadeIn, stay, fadeOut});
-                sendPacket(player, subtitlePacket);
+                ReflectionHelper.sendPacket(player, subtitlePacket);
 
-                e = TitleAPI.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("SUBTITLE")
+                e = ReflectionHelper.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("SUBTITLE")
                         .get((Object) null);
-                chatSubtitle = TitleAPI.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
+                chatSubtitle = ReflectionHelper.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
                         .getMethod("a", new Class[]{String.class})
                         .invoke((Object) null, new Object[]{"{\"text\":\"" + subtitle + "\"}"});
-                subtitleConstructor = TitleAPI.getNMSClass("PacketPlayOutTitle")
+                subtitleConstructor = ReflectionHelper.getNMSClass("PacketPlayOutTitle")
                         .getConstructor(new Class[]{
-                                TitleAPI.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0],
-                                TitleAPI.getNMSClass("IChatBaseComponent"), Integer.TYPE, Integer.TYPE, Integer.TYPE});
+                                ReflectionHelper.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0],
+                                ReflectionHelper.getNMSClass("IChatBaseComponent"), Integer.TYPE, Integer.TYPE, Integer.TYPE});
                 subtitlePacket = subtitleConstructor
                         .newInstance(new Object[]{e, chatSubtitle, fadeIn, stay, fadeOut});
-                sendPacket(player, subtitlePacket);
+                ReflectionHelper.sendPacket(player, subtitlePacket);
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static Class<?> getNMSClass(String name) {
-        String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        try {
-            return Class.forName("net.minecraft.server." + version + "." + name);
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    public static void sendPacket(Player player, Object packet) {
-        try {
-            Object handle = player.getClass().getMethod("getHandle", new Class[0]).invoke(player, new Object[0]);
-            Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
-            playerConnection.getClass().getMethod("sendPacket", new Class[]{TitleAPI.getNMSClass("Packet")})
-                    .invoke(playerConnection, new Object[]{packet});
         } catch (Exception ex) {
             ex.printStackTrace();
         }

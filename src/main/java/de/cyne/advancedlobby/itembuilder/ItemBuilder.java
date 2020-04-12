@@ -33,6 +33,10 @@ public class ItemBuilder extends ItemStack {
         this(material, 1, (short) 0);
     }
 
+    public ItemBuilder(ItemStack itemStack) {
+        this(itemStack.getType(), itemStack.getAmount(), itemStack.getDurability());
+    }
+
     public ItemBuilder setDisplayName(String displayName) {
         this.meta.setDisplayName(displayName);
         return this.build();
@@ -40,11 +44,6 @@ public class ItemBuilder extends ItemStack {
 
     public ItemBuilder setLore(String... lore) {
         this.meta.setLore(Arrays.asList(lore));
-        return this.build();
-    }
-
-    public ItemBuilder setUnbreakable(boolean unbreakable) {
-        this.meta.spigot().setUnbreakable(unbreakable);
         return this.build();
     }
 
@@ -78,5 +77,4 @@ public class ItemBuilder extends ItemStack {
         this.setItemMeta(this.meta);
         return this;
     }
-
 }

@@ -21,7 +21,7 @@ public class TeleportAllCommand implements CommandExecutor {
             for (Player players : Bukkit.getOnlinePlayers()) {
                 if (players != p) {
                     AdvancedLobby.playSound(p, p.getLocation(), "commands.teleportall_command");
-                    if(!AdvancedLobby.silentlobby.contains(players)) {
+                    if (!AdvancedLobby.silentLobby.contains(players)) {
                         players.teleport(p);
                         AdvancedLobby.playSound(players, p.getLocation(), "commands.teleportall_command");
                         players.sendMessage(Locale.COMMAND_TELEPORTALL_TELEPORT.getMessage(p).replace("%player%", AdvancedLobby.getName(p)));

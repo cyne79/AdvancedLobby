@@ -25,7 +25,7 @@ public class PlayerCommandPreprocessListener implements Listener {
         }
 
         if (AdvancedLobby.cfg.getStringList("block_commands.commands").contains(message) && !p.hasPermission("advancedlobby.admin")) {
-            if(AdvancedLobby.cfg.getBoolean("block_commands.enabled")) {
+            if (AdvancedLobby.cfg.getBoolean("block_commands.enabled")) {
                 e.setCancelled(true);
                 p.sendMessage(Locale.NO_PERMISSION.getMessage(p));
                 return;

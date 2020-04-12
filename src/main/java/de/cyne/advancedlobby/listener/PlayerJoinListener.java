@@ -14,7 +14,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -110,7 +109,7 @@ public class PlayerJoinListener implements Listener {
         }
 
 
-        ItemBuilder teleporter = new ItemBuilder(Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.teleporter.material")), 1,
+        ItemBuilder teleporter = new ItemBuilder(AdvancedLobby.getMaterial("hotbar_items.teleporter.material"), 1,
                 (short) AdvancedLobby.cfg.getInt("hotbar_items.teleporter.subid")).setDisplayName(
                 ChatColor.translateAlternateColorCodes('&', AdvancedLobby.cfg.getString("hotbar_items.teleporter.displayname")))
                 .setLore(AdvancedLobby.cfg.getStringList("hotbar_items.teleporter.lore"));
@@ -119,7 +118,7 @@ public class PlayerJoinListener implements Listener {
             p.getInventory().setItem(AdvancedLobby.cfg.getInt("hotbar_items.teleporter.slot"), teleporter);
         }
 
-        ItemBuilder hider = new ItemBuilder(Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.player_hider.show_all.material")),
+        ItemBuilder hider = new ItemBuilder(AdvancedLobby.getMaterial("hotbar_items.player_hider.show_all.material"),
                 1, (short) AdvancedLobby.cfg.getInt("hotbar_items.player_hider.show_all.subid"))
                 .setDisplayName(ChatColor.translateAlternateColorCodes('&',
                         AdvancedLobby.cfg.getString("hotbar_items.player_hider.show_all.displayname")))
@@ -129,7 +128,7 @@ public class PlayerJoinListener implements Listener {
             p.getInventory().setItem(AdvancedLobby.cfg.getInt("hotbar_items.player_hider.slot"), hider);
         }
 
-        ItemBuilder cosmetics = new ItemBuilder(Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.cosmetics.material")), 1,
+        ItemBuilder cosmetics = new ItemBuilder(AdvancedLobby.getMaterial("hotbar_items.cosmetics.material"), 1,
                 (short) AdvancedLobby.cfg.getInt("hotbar_items.cosmetics.subid")).setDisplayName(
                 ChatColor.translateAlternateColorCodes('&', AdvancedLobby.cfg.getString("hotbar_items.cosmetics.displayname")))
                 .setLore(AdvancedLobby.cfg.getStringList("hotbar_items.cosmetics.lore"));
@@ -138,7 +137,7 @@ public class PlayerJoinListener implements Listener {
             p.getInventory().setItem(AdvancedLobby.cfg.getInt("hotbar_items.cosmetics.slot"), cosmetics);
         }
 
-        ItemBuilder no_gadget = new ItemBuilder(Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.gadget.unequipped.material")), 1,
+        ItemBuilder no_gadget = new ItemBuilder(AdvancedLobby.getMaterial("hotbar_items.gadget.unequipped.material"), 1,
                 (short) AdvancedLobby.cfg.getInt("hotbar_items.gadget.unequipped.subid")).setDisplayName(
                 ChatColor.translateAlternateColorCodes('&', AdvancedLobby.cfg.getString("hotbar_items.gadget.unequipped.displayname")))
                 .setLore(AdvancedLobby.cfg.getStringList("hotbar_items.gadget.unequipped.lore"));
@@ -148,7 +147,7 @@ public class PlayerJoinListener implements Listener {
         }
 
         ItemBuilder silentlobby = new ItemBuilder(
-                Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.silentlobby.deactivated.material")), 1,
+                AdvancedLobby.getMaterial("hotbar_items.silentlobby.deactivated.material"), 1,
                 (short) AdvancedLobby.cfg.getInt("hotbar_items.silentlobby.deactivated.subid"))
                 .setDisplayName(ChatColor.translateAlternateColorCodes('&',
                         AdvancedLobby.cfg.getString("hotbar_items.silentlobby.deactivated.displayname")))
@@ -159,7 +158,7 @@ public class PlayerJoinListener implements Listener {
         }
 
         ItemBuilder shield = new ItemBuilder(
-                Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.shield.deactivated.material")), 1,
+                AdvancedLobby.getMaterial("hotbar_items.shield.deactivated.material"), 1,
                 (short) AdvancedLobby.cfg.getInt("hotbar_items.shield.deactivated.subid"))
                 .setDisplayName(ChatColor.translateAlternateColorCodes('&',
                         AdvancedLobby.cfg.getString("hotbar_items.shield.deactivated.displayname")))
@@ -170,7 +169,7 @@ public class PlayerJoinListener implements Listener {
         }
 
         ItemBuilder custom_item = new ItemBuilder(
-                Material.getMaterial(AdvancedLobby.cfg.getString("hotbar_items.custom_item.material")), 1,
+                AdvancedLobby.getMaterial("hotbar_items.custom_item.material"), 1,
                 (short) AdvancedLobby.cfg.getInt("hotbar_items.custom_item.subid"))
                 .setDisplayName(ChatColor.translateAlternateColorCodes('&',
                         AdvancedLobby.cfg.getString("hotbar_items.custom_item.displayname")))
@@ -181,17 +180,17 @@ public class PlayerJoinListener implements Listener {
         }
 
         for (Player players : AdvancedLobby.playerHider.keySet()) {
-            if(AdvancedLobby.playerHider.get(players) == HiderType.VIP) {
-                if(!p.hasPermission("advancedlobby.player_hider.bypass")) {
+            if (AdvancedLobby.playerHider.get(players) == HiderType.VIP) {
+                if (!p.hasPermission("advancedlobby.player_hider.bypass")) {
                     players.hidePlayer(p);
                 }
             }
-            if(AdvancedLobby.playerHider.get(players) == HiderType.NONE) {
+            if (AdvancedLobby.playerHider.get(players) == HiderType.NONE) {
                 players.hidePlayer(p);
             }
         }
 
-        for (Player players : AdvancedLobby.silentlobby) {
+        for (Player players : AdvancedLobby.silentLobby) {
             players.hidePlayer(p);
             p.hidePlayer(players);
         }
@@ -210,31 +209,30 @@ public class PlayerJoinListener implements Listener {
             }
         }
 
-        if (AdvancedLobby.updateAvailable && p.hasPermission("advancedlobby.admin")) {
-            TextComponent message = new TextComponent("§8┃ §bAdvancedLobby §8┃ §7Download now §8▶ ");
-            TextComponent extra = new TextComponent("§8*§aclick§8*");
+        if(p.hasPermission("advancedlobby.admin")) {
+            if (AdvancedLobby.updateAvailable) {
+                TextComponent message = new TextComponent("§8┃ §bAdvancedLobby §8┃ §7Download now §8▶ ");
+                TextComponent extra = new TextComponent("§8*§aclick§8*");
 
-            extra.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§8» §7Redirect to §bhttps://spigotmc.org/").create()));
-            extra.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://spigotmc.org/resources/35799/"));
+                extra.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§8» §7Redirect to §bhttps://spigotmc.org/").create()));
+                extra.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://spigotmc.org/resources/35799/"));
 
-            message.addExtra(extra);
+                message.addExtra(extra);
 
 
-            p.sendMessage("");
-            p.sendMessage("§8┃ §bAdvancedLobby §8┃ §7A §anew update §7for §bAdvancedLobby §7was found§8.");
-            p.spigot().sendMessage(message);
-            p.sendMessage("");
+                p.sendMessage("");
+                p.sendMessage("§8┃ §bAdvancedLobby §8┃ §7A §anew update §7for §bAdvancedLobby §7was found§8.");
+                p.spigot().sendMessage(message);
+                p.sendMessage("");
+            }
+            if(!AdvancedLobby.errors.isEmpty()) {
+                p.sendMessage("");
+                p.sendMessage("§8┃ §4AdvancedLobby §8┃ §c" + AdvancedLobby.errors.size() + " errors §7were found.");
+                p.sendMessage("§8┃ §4AdvancedLobby §8┃ §7You can see them by typing §8/§fal errors");
+                p.sendMessage("");
+            }
         }
 
-        if (AdvancedLobby.devMode && p.hasPermission("advancedlobby.admin")) {
-            p.sendMessage("");
-            p.sendMessage("§8┃ §bAdvancedLobby §8┃ §cAdvanced development mode is active.");
-            p.sendMessage("§8┃ §bAdvancedLobby §8┃ §cIf you are not the author of this plugin, contact him.");
-            p.sendMessage("§8┃ §bAdvancedLobby §8┃ §8§m-----------------------------------");
-            p.sendMessage("§8┃ §bAdvancedLobby §8┃ §7Current version§8: §f" + AdvancedLobby.updater.getCurrentVersion());
-            p.sendMessage("§8┃ §bAdvancedLobby §8┃ §7Latest published version§8: §f" + AdvancedLobby.updater.getLatestVersion());
-            p.sendMessage("");
-        }
 
     }
 

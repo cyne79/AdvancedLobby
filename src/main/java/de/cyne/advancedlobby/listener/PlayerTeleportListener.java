@@ -14,7 +14,7 @@ public class PlayerTeleportListener implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player p = e.getPlayer();
         if (Cosmetics.balloons.containsKey(p)) {
-            if(AdvancedLobby.bungeecord | p.getWorld() == AdvancedLobby.lobbyWorld) {
+            if(!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(AdvancedLobby.getInstance(), () -> {
                     Cosmetics.balloons.get(p).remove();
                     Cosmetics.balloons.get(p).create();

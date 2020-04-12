@@ -18,14 +18,14 @@ public class GlobalMuteCommand implements CommandExecutor {
         }
         Player p = (Player) sender;
         if (p.hasPermission("advancedlobby.commands.globalmute")) {
-            if (!AdvancedLobby.globalmute) {
-                AdvancedLobby.globalmute = true;
+            if (!AdvancedLobby.globalMute) {
+                AdvancedLobby.globalMute = true;
                 for (Player players : Bukkit.getOnlinePlayers()) {
                     players.sendMessage(Locale.COMMAND_GLOBALMUTE_ENABLE.getMessage(p).replace("%player%", AdvancedLobby.getName(p)));
                 }
                 return true;
             }
-            AdvancedLobby.globalmute = false;
+            AdvancedLobby.globalMute = false;
             for (Player players : Bukkit.getOnlinePlayers()) {
                 players.sendMessage(Locale.COMMAND_GLOBALMUTE_DISABLE.getMessage(p).replace("%player%", AdvancedLobby.getName(p)));
             }

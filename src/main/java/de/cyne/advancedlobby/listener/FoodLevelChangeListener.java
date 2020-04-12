@@ -12,7 +12,7 @@ public class FoodLevelChangeListener implements Listener {
     public void onFoodLevelChange(FoodLevelChangeEvent e) {
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
-            if (AdvancedLobby.bungeecord | p.getWorld() == AdvancedLobby.lobbyWorld) {
+            if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
                 e.setCancelled(true);
             }
         }

@@ -3,6 +3,8 @@ package de.cyne.advancedlobby.listener;
 import de.cyne.advancedlobby.AdvancedLobby;
 import de.cyne.advancedlobby.cosmetics.Cosmetics;
 import de.cyne.advancedlobby.cosmetics.Cosmetics.ParticleType;
+import de.cyne.advancedlobby.crossversion.VMaterial;
+import de.cyne.advancedlobby.crossversion.VParticle;
 import de.cyne.advancedlobby.misc.HiderType;
 import de.cyne.advancedlobby.misc.LocationManager;
 import org.bukkit.Bukkit;
@@ -21,25 +23,25 @@ public class PlayerMoveListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
-        if (AdvancedLobby.bungeecord | p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
             /*
              * PARTICLES >
              */
             if (Cosmetics.particles.containsKey(p)) {
                 if (Cosmetics.particles.get(p) == ParticleType.HEART) {
-                    showParticles(p, Effect.HEART, 1, 1, 0.3F, 0.3F, 0.3F, 1.0F, 2, 8);
+                    showParticles(p, "HEART", 2, 0.3F, 0.3F, 0.3F, 1.0F);
                 }
                 if (Cosmetics.particles.get(p) == ParticleType.MUSIC) {
-                    showParticles(p, Effect.NOTE, 1, 1, 0.3F, 0.3F, 0.3F, 1.0F, 3, 8);
+                    showParticles(p, "NOTE", 3, 0.3F, 0.3F, 0.3F, 1.0F);
                 }
                 if (Cosmetics.particles.get(p) == ParticleType.FLAMES) {
-                    showParticles(p, Effect.FLAME, 1, 1, 0.0F, 0.0F, 0.0F, 0.1F, 4, 16);
+                    showParticles(p, "FLAME", 4, 0.0F, 0.0F, 0.0F, 0.1F);
                 }
                 if (Cosmetics.particles.get(p) == ParticleType.VILLAGER) {
-                    showParticles(p, Effect.HAPPY_VILLAGER, 1, 1, 0.5F, 0.5F, 0.5F, 1.0F, 4, 8);
+                    showParticles(p, "VILLAGER_HAPPY", 4, 0.5F, 0.5F, 0.5F, 1.0F);
                 }
                 if (Cosmetics.particles.get(p) == ParticleType.RAINBOW) {
-                    showParticles(p, Effect.COLOURED_DUST, 1, 1, 0.5F, 0.5F, 0.5F, 1.0F, 8, 8);
+                    showParticles(p, "SPELL_MOB", 8, 0.5F, 0.5F, 0.5F, 1.0F);
                 }
             }
             /*
@@ -65,7 +67,7 @@ public class PlayerMoveListener implements Listener {
             /*
              * JUMPPADS >
              */
-            if (p.getLocation().getBlock().getType() == Material.GOLD_PLATE | p.getLocation().getBlock().getType() == Material.IRON_PLATE | p.getLocation().getBlock().getType() == Material.STONE_PLATE | p.getLocation().getBlock().getType() == Material.WOOD_PLATE && p.getLocation().subtract(0.0D, 2.0D, 0.0D).getBlock().getType() == Material.REDSTONE_BLOCK) {
+            if (p.getLocation().getBlock().getType() == VMaterial.HEAVY_WEIGHTED_PRESSURE_PLATE.getType() | p.getLocation().getBlock().getType() == VMaterial.DARK_OAK_PRESSURE_PLATE.getType() | p.getLocation().getBlock().getType() == VMaterial.BIRCH_PRESSURE_PLATE.getType() | p.getLocation().getBlock().getType() == VMaterial.ACACIA_PRESSURE_PLATE.getType() | p.getLocation().getBlock().getType() == VMaterial.JUNGLE_PRESSURE_PLATE.getType() | p.getLocation().getBlock().getType() == VMaterial.LIGHT_WEIGHTED_PRESSURE_PLATE.getType() | p.getLocation().getBlock().getType() == VMaterial.OAK_PRESSURE_PLATE.getType() | p.getLocation().getBlock().getType() == VMaterial.SPRUCE_PRESSURE_PLATE.getType() | p.getLocation().getBlock().getType() == VMaterial.STONE_PRESSURE_PLATE.getType() && p.getLocation().subtract(0.0D, 2.0D, 0.0D).getBlock().getType() == Material.REDSTONE_BLOCK) {
                 if (AdvancedLobby.cfg.getBoolean("jumppads.enabled")) {
                     Vector vector = p.getLocation().getDirection().multiply(AdvancedLobby.cfg.getDouble("jumppads.lenght")).setY(AdvancedLobby.cfg.getDouble("jumppads.height"));
                     p.setVelocity(vector);
@@ -75,7 +77,7 @@ public class PlayerMoveListener implements Listener {
 
                     for (Player players : Bukkit.getOnlinePlayers()) {
                         if (p != players) {
-                            if (!AdvancedLobby.silentlobby.contains(p) && !AdvancedLobby.silentlobby.contains(players) && !AdvancedLobby.playerHider.containsKey(players)) {
+                            if (!AdvancedLobby.silentLobby.contains(p) && !AdvancedLobby.silentLobby.contains(players) && !AdvancedLobby.playerHider.containsKey(players)) {
                                 AdvancedLobby.playSound(players, p.getLocation(), "jumppads");
                                 players.playEffect(p.getLocation(), Effect.MOBSPAWNER_FLAMES, 1);
                             }
@@ -95,7 +97,7 @@ public class PlayerMoveListener implements Listener {
                 for (Entity entities : p.getNearbyEntities(2.5D, 2.5D, 2.5D)) {
                     if (entities instanceof Player) {
                         Player nearbyPlayers = (Player) entities;
-                        if (!nearbyPlayers.hasMetadata("NPC") && !AdvancedLobby.silentlobby.contains(p) && !AdvancedLobby.silentlobby.contains(nearbyPlayers)) {
+                        if (!nearbyPlayers.hasMetadata("NPC") && !AdvancedLobby.silentLobby.contains(p) && !AdvancedLobby.silentLobby.contains(nearbyPlayers)) {
                             if (!nearbyPlayers.hasPermission("advancedlobby.shield.bypass")) {
 
                                 Vector nPV = nearbyPlayers.getLocation().toVector();
@@ -107,7 +109,7 @@ public class PlayerMoveListener implements Listener {
 
                                 for (Player players : Bukkit.getOnlinePlayers()) {
                                     if (p != players) {
-                                        if (!AdvancedLobby.silentlobby.contains(p) && !AdvancedLobby.silentlobby.contains(players)) {
+                                        if (!AdvancedLobby.silentLobby.contains(p) && !AdvancedLobby.silentLobby.contains(players)) {
                                             if (!nearbyPlayers.hasPermission("advancedlobby.shield.bypass")) {
                                                 players.playEffect(p.getLocation(), Effect.ENDER_SIGNAL, 1);
                                             }
@@ -131,7 +133,7 @@ public class PlayerMoveListener implements Listener {
             for (Player players : Bukkit.getOnlinePlayers()) {
                 if (p != players) {
                     if (AdvancedLobby.shield.contains(players)) {
-                        if (!p.hasMetadata("NPC") && !AdvancedLobby.silentlobby.contains(p) && !AdvancedLobby.silentlobby.contains(players)) {
+                        if (!p.hasMetadata("NPC") && !AdvancedLobby.silentLobby.contains(p) && !AdvancedLobby.silentLobby.contains(players)) {
                             if (p.getLocation().distance(players.getLocation()) <= 2.5) {
 
 
@@ -147,7 +149,7 @@ public class PlayerMoveListener implements Listener {
 
                                 for (Player players1 : Bukkit.getOnlinePlayers()) {
                                     if (p != players1) {
-                                        if (!AdvancedLobby.silentlobby.contains(p) && !AdvancedLobby.silentlobby.contains(players)) {
+                                        if (!AdvancedLobby.silentLobby.contains(p) && !AdvancedLobby.silentLobby.contains(players)) {
                                             if (!p.hasPermission("advancedlobby.shield.bypass")) {
                                                 players1.playEffect(players.getLocation(), Effect.ENDER_SIGNAL, 1);
                                             }
@@ -184,7 +186,7 @@ public class PlayerMoveListener implements Listener {
 
                             for (Player players : Bukkit.getOnlinePlayers()) {
                                 if (p != players) {
-                                    if (!AdvancedLobby.silentlobby.contains(players) && !AdvancedLobby.silentlobby.contains(p)) {
+                                    if (!AdvancedLobby.silentLobby.contains(players) && !AdvancedLobby.silentLobby.contains(p)) {
                                         if (!AdvancedLobby.playerHider.containsKey(players)) {
                                             players.playEffect(p.getLocation(), Effect.SMOKE, 1);
                                             AdvancedLobby.playSound(players, p.getLocation(), "worldborder_push_back");
@@ -216,15 +218,15 @@ public class PlayerMoveListener implements Listener {
 
     }
 
-
-    private void showParticles(Player player, Effect effect, int id, int data, float offsetX, float offsetY, float offsetZ, float speed, int particleCount, int radius) {
-        player.spigot().playEffect(player.getLocation(), effect, id, data, offsetX, offsetY, offsetZ, speed, particleCount, radius);
+    private void showParticles(Player player, String particle, int count, double offsetX, double offsetY, double offsetZ, double extra) {
+        VParticle.spawnParticle(player, particle, player.getLocation(), count, offsetX, offsetY, offsetZ, extra);
         for (Player players : Bukkit.getOnlinePlayers()) {
-            if (players != player && !AdvancedLobby.silentlobby.contains(players) && !AdvancedLobby.silentlobby.contains(player) && !(AdvancedLobby.playerHider.get(players) == HiderType.NONE)) {
-                players.spigot().playEffect(player.getLocation(), effect, id, data, offsetX, offsetY, offsetZ, speed, particleCount, radius);
+            if (players != player && !AdvancedLobby.silentLobby.contains(players) && !AdvancedLobby.silentLobby.contains(player) && !(AdvancedLobby.playerHider.get(players) == HiderType.NONE)) {
+                VParticle.spawnParticle(players, particle, player.getLocation(), count, offsetX, offsetY, offsetZ, extra);
             }
         }
     }
+
 
     private boolean playerAtWorldBorder(Player player, Location location) {
         double radius = AdvancedLobby.cfg.getDouble("worldborder.radius");

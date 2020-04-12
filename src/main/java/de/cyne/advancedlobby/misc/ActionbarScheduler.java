@@ -6,8 +6,6 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 
@@ -30,7 +28,7 @@ public class ActionbarScheduler {
                 i = 0;
 
             for (Player players : Bukkit.getOnlinePlayers()) {
-                if(players.getWorld() == AdvancedLobby.lobbyWorld) {
+                if (players.getWorld() == AdvancedLobby.lobbyWorld) {
                     taskId2 = Bukkit.getScheduler().scheduleSyncRepeatingTask(AdvancedLobby.getInstance(), () -> {
                         if (AdvancedLobby.placeholderApi) {
                             TitleAPI.sendActionBar(players, PlaceholderAPI.setPlaceholders(players, messages.get(i)));

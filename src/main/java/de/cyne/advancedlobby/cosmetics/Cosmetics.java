@@ -1,6 +1,8 @@
 package de.cyne.advancedlobby.cosmetics;
 
 import de.cyne.advancedlobby.AdvancedLobby;
+import de.cyne.advancedlobby.crossversion.VMaterial;
+import de.cyne.advancedlobby.crossversion.VParticle;
 import de.cyne.advancedlobby.itembuilder.ItemBuilder;
 import de.cyne.advancedlobby.locale.Locale;
 import de.cyne.advancedlobby.misc.Balloon;
@@ -8,7 +10,6 @@ import org.bukkit.*;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -24,7 +25,7 @@ public class Cosmetics {
     public static ArrayList<Player> gadgetReloading = new ArrayList<>();
 
     public enum HatType {
-        MELON_BLOCK, TNT, GLASS, SPONGE, PUMPKIN, CACTUS
+        MELON_BLOCK, MELON, TNT, GLASS, SPONGE, PUMPKIN, CACTUS
     }
 
     public enum ParticleType {
@@ -47,9 +48,10 @@ public class Cosmetics {
         String message = null;
         switch (type) {
             case MELON_BLOCK:
+            case MELON:
                 if (player.hasPermission("advancedlobby.cosmetics.hats.melon")) {
-                    hat = new ItemBuilder(Material.MELON_BLOCK).setDisplayName(AdvancedLobby.getString("inventories.cosmetics_hats.melon_hat.displayname"));
-                    hats.put(player, HatType.MELON_BLOCK);
+                    hat = new ItemBuilder(VMaterial.MELON.getType()).setDisplayName(AdvancedLobby.getString("inventories.cosmetics_hats.melon_hat.displayname"));
+                    hats.put(player, HatType.MELON);
                     message = Locale.COSMETICS_HATS_EQUIP.getMessage(player).replace("%hat%", AdvancedLobby.getString("inventories.cosmetics_hats.melon_hat.displayname"));
                     break;
                 }
@@ -109,32 +111,32 @@ public class Cosmetics {
         Balloon balloon = null;
         switch (type) {
             case YELLOW:
-                balloon = new Balloon(player, Material.STAINED_CLAY, (byte) 4);
+                balloon = new Balloon(player, VMaterial.YELLOW_TERRACOTTA.toItemStack());
                 break;
             case RED:
-                balloon = new Balloon(player, Material.STAINED_CLAY, (byte) 14);
+                balloon = new Balloon(player, VMaterial.RED_TERRACOTTA.toItemStack());
                 break;
             case GREEN:
-                balloon = new Balloon(player, Material.STAINED_CLAY, (byte) 5);
+                balloon = new Balloon(player, VMaterial.LIME_TERRACOTTA.toItemStack());
                 break;
             case BLUE:
-                balloon = new Balloon(player, Material.STAINED_CLAY, (byte) 3);
+                balloon = new Balloon(player, VMaterial.LIGHT_BLUE_TERRACOTTA.toItemStack());
                 break;
             case HAY_BLOCK:
-                balloon = new Balloon(player, Material.HAY_BLOCK, (byte) 0);
+                balloon = new Balloon(player, Material.HAY_BLOCK);
                 break;
             case SEA_LANTERN:
-                balloon = new Balloon(player, Material.SEA_LANTERN, (byte) 0);
+                balloon = new Balloon(player, Material.SEA_LANTERN);
                 break;
             case BOOKSHELF:
-                balloon = new Balloon(player, Material.BOOKSHELF, (byte) 0);
+                balloon = new Balloon(player, Material.BOOKSHELF);
                 break;
             case NOTE_BLOCK:
-                balloon = new Balloon(player, Material.NOTE_BLOCK, (byte) 0);
+                balloon = new Balloon(player, Material.NOTE_BLOCK);
                 break;
         }
         if (type != null) {
-            if(!AdvancedLobby.silentlobby.contains(player)) {
+            if (!AdvancedLobby.silentLobby.contains(player)) {
                 balloon.create();
             }
             balloons.put(player, balloon);
@@ -147,7 +149,7 @@ public class Cosmetics {
         ItemStack gadget = null;
         switch (type) {
             case GRAPPLING_HOOK:
-                gadget = new ItemBuilder(Material.FISHING_ROD).setDisplayName(AdvancedLobby.getString("hotbar_items.gadget.equipped.displayname").replace("%gadget%", AdvancedLobby.getString("inventories.cosmetics_gadgets.grappling_hook_gadget.displayname"))).setLore(AdvancedLobby.cfg.getStringList("hotbar_items.gadget.equipped.lore")).setUnbreakable(true).addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+                gadget = new ItemBuilder(Material.FISHING_ROD).setDisplayName(AdvancedLobby.getString("hotbar_items.gadget.equipped.displayname").replace("%gadget%", AdvancedLobby.getString("inventories.cosmetics_gadgets.grappling_hook_gadget.displayname"))).setLore(AdvancedLobby.cfg.getStringList("hotbar_items.gadget.equipped.lore"));
                 break;
             case ROCKET_JUMP:
                 gadget = new ItemBuilder(Material.FEATHER).setDisplayName(AdvancedLobby.getString("hotbar_items.gadget.equipped.displayname").replace("%gadget%", AdvancedLobby.getString("inventories.cosmetics_gadgets.rocket_jump_gadget.displayname"))).setLore(AdvancedLobby.cfg.getStringList("hotbar_items.gadget.equipped.lore"));
@@ -161,9 +163,9 @@ public class Cosmetics {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(AdvancedLobby.getInstance(), () -> {
             for (Player players : Bukkit.getOnlinePlayers()) {
                 if (balloons.containsKey(players)) {
-                    if (AdvancedLobby.bungeecord | players.getWorld() == AdvancedLobby.lobbyWorld) {
-                        if (!AdvancedLobby.silentlobby.contains(players)) {
-                            if(balloons.get(players).getFallingBlock() == null) {
+                    if (!AdvancedLobby.singleWorld_mode | players.getWorld() == AdvancedLobby.lobbyWorld) {
+                        if (!AdvancedLobby.silentLobby.contains(players)) {
+                            if (balloons.get(players).getFallingBlock() == null) {
                                 balloons.get(players).create();
                             }
                             if (balloons.get(players).getFallingBlock().isDead() | balloons.get(players).getBat().isDead()) {
@@ -192,10 +194,9 @@ public class Cosmetics {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(AdvancedLobby.getInstance(), () -> {
             for (Player players : Bukkit.getOnlinePlayers()) {
                 for (FallingBlock fallingBlocks : Balloon.fallingBlocks.values()) {
-                    if (AdvancedLobby.bungeecord | players.getWorld() == AdvancedLobby.lobbyWorld) {
-                        if (!AdvancedLobby.silentlobby.contains(players)) {
-                            players.spigot().playEffect(fallingBlocks.getLocation(), Effect.SPELL, 1, 1, 0.0f, 0.0f, 0.0f, 0.1f, 8,
-                                    4);
+                    if (!AdvancedLobby.singleWorld_mode | players.getWorld() == AdvancedLobby.lobbyWorld) {
+                        if (!AdvancedLobby.silentLobby.contains(players)) {
+                            VParticle.spawnParticle(players, "SPELL", fallingBlocks.getLocation(), 4, 0.0f, 0.0f, 0.0f, 0.1f);
                         }
                     }
                 }

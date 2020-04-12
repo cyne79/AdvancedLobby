@@ -25,7 +25,7 @@ public class PlayerQuitListener implements Listener {
         AdvancedLobby.fly.remove(p);
         AdvancedLobby.playerHider.remove(p);
         AdvancedLobby.shield.remove(p);
-        AdvancedLobby.silentlobby.remove(p);
+        AdvancedLobby.silentLobby.remove(p);
     }
 
 }

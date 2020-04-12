@@ -11,7 +11,7 @@ public class PlayerArmorStandManipulateListener implements Listener {
     @EventHandler
     public void onPlayerArmorStandManipulate(PlayerArmorStandManipulateEvent e) {
         Player p = e.getPlayer();
-        if (AdvancedLobby.bungeecord | p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
             if (!AdvancedLobby.build.contains(p)) {
                 e.setCancelled(true);
             }

@@ -15,16 +15,16 @@ public class AsyncPlayerChatListener implements Listener {
         Player p = e.getPlayer();
         String message = e.getMessage().replace("%", "%%");
 
-        for (Player silentPlayers : AdvancedLobby.silentlobby) {
+        for (Player silentPlayers : AdvancedLobby.silentLobby) {
             e.getRecipients().remove(silentPlayers);
         }
 
-        if (AdvancedLobby.silentlobby.contains(p)) {
+        if (AdvancedLobby.silentLobby.contains(p)) {
             e.setCancelled(true);
             p.sendMessage(Locale.SILENTLOBBY_CHAT_BLOCKED.getMessage(p));
         }
 
-        if (AdvancedLobby.globalmute) {
+        if (AdvancedLobby.globalMute) {
             if (!p.hasPermission("advancedlobby.globalmute.bypass")) {
                 e.setCancelled(true);
                 p.sendMessage(Locale.GLOBALMUTE_CHAT_BLOCKED.getMessage(p));
