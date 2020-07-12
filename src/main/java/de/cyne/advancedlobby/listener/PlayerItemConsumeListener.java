@@ -11,7 +11,7 @@ public class PlayerItemConsumeListener implements Listener {
     @EventHandler
     public void onPlayerItemConsume(PlayerItemConsumeEvent e) {
         Player p = e.getPlayer();
-        if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.multiWorld_mode | AdvancedLobby.lobbyWorlds.contains(p.getWorld())) {
             e.setCancelled(true);
         }
     }

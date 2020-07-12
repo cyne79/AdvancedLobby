@@ -11,7 +11,7 @@ public class PlayerBucketFillListener implements Listener {
     @EventHandler
     public void onPlayerBucketFill(PlayerBucketFillEvent e) {
         Player p = e.getPlayer();
-        if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.multiWorld_mode | AdvancedLobby.lobbyWorlds.contains(p.getWorld())) {
             if (!AdvancedLobby.build.contains(p)) {
                 e.setCancelled(true);
             }

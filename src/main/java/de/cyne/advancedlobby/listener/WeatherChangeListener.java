@@ -9,7 +9,7 @@ public class WeatherChangeListener implements Listener {
 
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent e) {
-        if (!AdvancedLobby.singleWorld_mode | e.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.multiWorld_mode | AdvancedLobby.lobbyWorlds.contains( e.getWorld())) {
             if(AdvancedLobby.cfg.getBoolean("weather.lock_weather")) {
                 e.setCancelled(true);
             }

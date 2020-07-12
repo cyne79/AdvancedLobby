@@ -11,7 +11,7 @@ public class PlayerItemHeldListener implements Listener {
     @EventHandler
     public void onPlayerItemHeld(PlayerItemHeldEvent e) {
         Player p = e.getPlayer();
-        if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.multiWorld_mode | AdvancedLobby.lobbyWorlds.contains(p.getWorld())) {
             if (!AdvancedLobby.build.contains(p)) {
                 AdvancedLobby.playSound(p, p.getLocation(), "hotbar_switch");
             }

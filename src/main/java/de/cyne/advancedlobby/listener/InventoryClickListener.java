@@ -14,6 +14,8 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class InventoryClickListener implements Listener {
@@ -21,11 +23,12 @@ public class InventoryClickListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.multiWorld_mode | AdvancedLobby.lobbyWorlds.contains(p.getWorld())) {
+            if (!AdvancedLobby.build.contains(p)) {
+                p.updateInventory();
+                e.setCancelled(true);
+            }
             if (e.getCurrentItem() != null) {
-                if (e.getClickedInventory() == p.getInventory() && !AdvancedLobby.build.contains(p)) {
-                    e.setCancelled(true);
-                }
                 /*
                  * COMPASS >
                  */
@@ -99,10 +102,10 @@ public class InventoryClickListener implements Listener {
                     }
 
                     /**if (e.getCurrentItem().getType() == Material.IRON_BOOTS) {
-                        Inventories.openCosmetics_wardrobe(p);
-                        AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.change_page");
-                        return;
-                    }**/
+                     Inventories.openCosmetics_wardrobe(p);
+                     AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.change_page");
+                     return;
+                     }**/
 
                 }
                 /*
@@ -264,8 +267,8 @@ public class InventoryClickListener implements Listener {
                     AdvancedLobby.playSound(p, p.getLocation(), "cosmetics.equip_cosmetic");
 
                     //yellow clay, byte 4
-                    //if (e.getCurrentItem().getType() == VMaterial.YELLOW_TERRACOTTA.getType() && e.getCurrentItem().getDurability() == (VMaterial.YELLOW_TERRACOTTA.getSubId() | 0)) {
-                    if (VMaterial.YELLOW_TERRACOTTA.equals(e.getCurrentItem())) {
+                    if (e.getCurrentItem().getType() == VMaterial.YELLOW_TERRACOTTA.getType() && e.getCurrentItem().getDurability() == (VMaterial.YELLOW_TERRACOTTA.getSubId() | 0)) {
+                        //if (VMaterial.YELLOW_TERRACOTTA.equals(e.getCurrentItem())) {
                         p.closeInventory();
                         if (p.hasPermission("advancedlobby.cosmetics.balloons.yellow")) {
                             Cosmetics.equipBalloon(p, Cosmetics.BalloonType.YELLOW);
@@ -276,8 +279,8 @@ public class InventoryClickListener implements Listener {
                         return;
                     }
                     //red clay, byte 14
-                    //if (e.getCurrentItem().getType() == VMaterial.RED_TERRACOTTA.getType() && e.getCurrentItem().getDurability() == (VMaterial.RED_TERRACOTTA.getSubId() | 0)) {
-                    if (VMaterial.RED_TERRACOTTA.equals(e.getCurrentItem())) {
+                    if (e.getCurrentItem().getType() == VMaterial.RED_TERRACOTTA.getType() && e.getCurrentItem().getDurability() == (VMaterial.RED_TERRACOTTA.getSubId() | 0)) {
+                        //if (VMaterial.RED_TERRACOTTA.equals(e.getCurrentItem())) {
                         p.closeInventory();
                         if (p.hasPermission("advancedlobby.cosmetics.balloons.red")) {
                             Cosmetics.equipBalloon(p, Cosmetics.BalloonType.RED);
@@ -288,8 +291,8 @@ public class InventoryClickListener implements Listener {
                         return;
                     }
                     //green clay, byte 5
-                    //if (e.getCurrentItem().getType() == VMaterial.LIME_TERRACOTTA.getType() && e.getCurrentItem().getDurability() == (VMaterial.LIME_TERRACOTTA.getSubId() | 0)) {
-                    if (VMaterial.LIME_TERRACOTTA.equals(e.getCurrentItem())) {
+                    if (e.getCurrentItem().getType() == VMaterial.LIME_TERRACOTTA.getType() && e.getCurrentItem().getDurability() == (VMaterial.LIME_TERRACOTTA.getSubId() | 0)) {
+                        //if (VMaterial.LIME_TERRACOTTA.equals(e.getCurrentItem())) {
                         p.closeInventory();
                         if (p.hasPermission("advancedlobby.cosmetics.balloons.green")) {
                             Cosmetics.equipBalloon(p, Cosmetics.BalloonType.GREEN);
@@ -300,8 +303,8 @@ public class InventoryClickListener implements Listener {
                         return;
                     }
                     //blue clay, byte 3
-                    //if (e.getCurrentItem().getType() == VMaterial.LIGHT_BLUE_TERRACOTTA.getType() && e.getCurrentItem().getDurability() == (VMaterial.LIGHT_BLUE_TERRACOTTA.getSubId() | 0)) {
-                    if (VMaterial.LIGHT_BLUE_TERRACOTTA.equals(e.getCurrentItem())) {
+                    if (e.getCurrentItem().getType() == VMaterial.LIGHT_BLUE_TERRACOTTA.getType() && e.getCurrentItem().getDurability() == (VMaterial.LIGHT_BLUE_TERRACOTTA.getSubId() | 0)) {
+                        //if (VMaterial.LIGHT_BLUE_TERRACOTTA.equals(e.getCurrentItem())) {
                         p.closeInventory();
                         if (p.hasPermission("advancedlobby.cosmetics.balloons.blue")) {
                             Cosmetics.equipBalloon(p, Cosmetics.BalloonType.BLUE);

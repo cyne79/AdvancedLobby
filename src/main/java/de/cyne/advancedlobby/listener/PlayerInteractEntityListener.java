@@ -13,7 +13,7 @@ public class PlayerInteractEntityListener implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
         Player p = e.getPlayer();
-        if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.multiWorld_mode | AdvancedLobby.lobbyWorlds.contains(p.getWorld())) {
             if (e.getRightClicked().getType() == EntityType.ITEM_FRAME && !AdvancedLobby.build.contains(p)) {
                 e.setCancelled(true);
             }

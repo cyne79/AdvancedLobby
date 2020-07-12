@@ -9,7 +9,7 @@ public class LeavesDecayListener implements Listener {
 
     @EventHandler
     public void onLeavesDecay(LeavesDecayEvent e) {
-        if (!AdvancedLobby.singleWorld_mode | e.getBlock().getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.multiWorld_mode | AdvancedLobby.lobbyWorlds.contains(e.getBlock().getWorld())) {
             e.setCancelled(true);
         }
     }

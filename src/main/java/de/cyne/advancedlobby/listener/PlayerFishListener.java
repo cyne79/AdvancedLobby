@@ -2,6 +2,7 @@ package de.cyne.advancedlobby.listener;
 
 import de.cyne.advancedlobby.AdvancedLobby;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -28,8 +29,10 @@ public class PlayerFishListener implements Listener {
             ex.printStackTrace();
         }
 
-        if (p.getItemInHand().hasItemMeta() && p.getItemInHand().getItemMeta().getDisplayName().equals(AdvancedLobby.getString("hotbar_items.gadget.equipped.displayname").replace("%gadget%", AdvancedLobby.getString("inventories.cosmetics_gadgets.grappling_hook_gadget.displayname")))) {
-            if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
+        String gadgetName = ChatColor.stripColor(AdvancedLobby.getString("hotbar_items.gadget.equipped.displayname").replaceAll("%gadget%", AdvancedLobby.getString("inventories.cosmetics_gadgets.grappling_hook_gadget.displayname")));
+        if (p.getItemInHand().hasItemMeta() && ChatColor.stripColor(p.getItemInHand().getItemMeta().getDisplayName()).equals(gadgetName)) {
+            //if(p.getItemInHand().hasItemMeta() && p.getItemInHand().getItemMeta().getDisplayName().equals("§bGrappling hook §8× §7rightclick")) {
+            if (!AdvancedLobby.multiWorld_mode | AdvancedLobby.lobbyWorlds.contains(p.getWorld())) {
                 if (!AdvancedLobby.build.contains(p)) {
                     if (hook.getLocation().subtract(0, 1, 0).getBlock().getType() != Material.AIR) {
                         Vector pV = p.getLocation().toVector();

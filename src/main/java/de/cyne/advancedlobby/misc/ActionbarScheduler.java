@@ -28,7 +28,7 @@ public class ActionbarScheduler {
                 i = 0;
 
             for (Player players : Bukkit.getOnlinePlayers()) {
-                if (players.getWorld() == AdvancedLobby.lobbyWorld) {
+                if (players.getWorld() == AdvancedLobby.lobbyWorlds) {
                     taskId2 = Bukkit.getScheduler().scheduleSyncRepeatingTask(AdvancedLobby.getInstance(), () -> {
                         if (AdvancedLobby.placeholderApi) {
                             TitleAPI.sendActionBar(players, PlaceholderAPI.setPlaceholders(players, messages.get(i)));

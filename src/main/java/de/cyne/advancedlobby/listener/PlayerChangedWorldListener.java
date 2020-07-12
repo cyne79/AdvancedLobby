@@ -24,8 +24,8 @@ public class PlayerChangedWorldListener implements Listener {
     public void onPlayerChangedWorld(PlayerChangedWorldEvent e) {
         Player p = e.getPlayer();
 
-        if (AdvancedLobby.singleWorld_mode) {
-            if (p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (AdvancedLobby.multiWorld_mode) {
+            if (AdvancedLobby.lobbyWorlds.contains(p.getWorld())) {
                 double health = AdvancedLobby.cfg.getDouble("player_join.health");
                 p.setMaxHealth(health);
                 p.setHealth(health);
@@ -65,7 +65,7 @@ public class PlayerChangedWorldListener implements Listener {
                 }
                 p.setGameMode(gameMode);
 
-                if (AdvancedLobby.cfg.getBoolean("player_join.clear_inventory")) {
+                if (AdvancedLobby.cfg.getBoolean("multiworld_mode.clear_inventory")) {
                     p.getInventory().clear();
                     p.getInventory().setArmorContents(null);
                     p.updateInventory();
@@ -188,7 +188,7 @@ public class PlayerChangedWorldListener implements Listener {
                 }
             }
 
-            if (e.getFrom() == AdvancedLobby.lobbyWorld) {
+            if (AdvancedLobby.lobbyWorlds.contains(e.getFrom()) && !AdvancedLobby.lobbyWorlds.contains(p.getWorld())) {
                 p.setMaxHealth(20);
                 if (Cosmetics.balloons.containsKey(p)) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(AdvancedLobby.getInstance(), () -> Cosmetics.balloons.get(p).remove(), 5L);
@@ -207,6 +207,12 @@ public class PlayerChangedWorldListener implements Listener {
                     if (!AdvancedLobby.silentLobby.contains(players)) {
                         p.showPlayer(players);
                     }
+                }
+
+                if (AdvancedLobby.cfg.getBoolean("multiworld_mode.clear_inventory")) {
+                    p.getInventory().clear();
+                    p.getInventory().setArmorContents(null);
+                    p.updateInventory();
                 }
 
             }

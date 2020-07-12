@@ -9,6 +9,7 @@ import de.cyne.advancedlobby.itembuilder.ItemBuilder;
 import de.cyne.advancedlobby.locale.Locale;
 import de.cyne.advancedlobby.misc.HiderType;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -29,7 +30,7 @@ public class PlayerInteractListener implements Listener {
         Player p = e.getPlayer();
         ItemStack item = p.getItemInHand();
 
-        if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.multiWorld_mode | AdvancedLobby.lobbyWorlds.contains(p.getWorld())) {
             if (e.getAction() == Action.PHYSICAL) {
                 if (AdvancedLobby.cfg.getBoolean("disable_physical_player_interaction")) {
                     if (!AdvancedLobby.build.contains(p)) e.setCancelled(true);
@@ -83,8 +84,8 @@ public class PlayerInteractListener implements Listener {
                     /*
                      * GADGETS >
                      */
-                    if (item.getType() == Material.FEATHER && item.hasItemMeta() && item
-                            .getItemMeta().getDisplayName().equals(AdvancedLobby.getString("hotbar_items.gadget.equipped.displayname").replace("%gadget%", AdvancedLobby.getString("inventories.cosmetics_gadgets.rocket_jump_gadget.displayname")))) {
+                    if (item.getType() == Material.FEATHER && item.hasItemMeta() && ChatColor.stripColor(item
+                            .getItemMeta().getDisplayName()).equals(ChatColor.stripColor(AdvancedLobby.getString("hotbar_items.gadget.equipped.displayname").replace("%gadget%", AdvancedLobby.getString("inventories.cosmetics_gadgets.rocket_jump_gadget.displayname"))))) {
                         if (AdvancedLobby.cfg.getBoolean("hotbar_items.gadget.enabled")) {
                             e.setCancelled(true);
                             if (Cosmetics.gadgetReloading.contains(p)) {

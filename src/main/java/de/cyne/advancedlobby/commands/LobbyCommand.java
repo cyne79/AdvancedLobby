@@ -19,7 +19,7 @@ public class LobbyCommand implements CommandExecutor {
         }
         Player p = (Player) sender;
 
-        if (p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (AdvancedLobby.lobbyWorlds.contains(p.getWorld())) {
             p.sendMessage(Locale.COMMAND_LOBBY_ALREADY_IN_LOBBY.getMessage(p));
             return true;
         }

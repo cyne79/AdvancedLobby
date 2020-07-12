@@ -11,7 +11,7 @@ public class PlayerUnleashEntityListener implements Listener {
     @EventHandler
     public void onPlayerUnleashEntity(PlayerUnleashEntityEvent e) {
         Player p = e.getPlayer();
-        if (!AdvancedLobby.singleWorld_mode | p.getWorld() == AdvancedLobby.lobbyWorld) {
+        if (!AdvancedLobby.multiWorld_mode | AdvancedLobby.lobbyWorlds.contains(p.getWorld())) {
             if (!AdvancedLobby.build.contains(p)) {
                 e.setCancelled(true);
             }

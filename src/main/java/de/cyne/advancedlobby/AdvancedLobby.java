@@ -49,8 +49,9 @@ public class AdvancedLobby extends JavaPlugin {
     public static boolean updateAvailable = false;
     public static boolean placeholderApi = false;
 
-    public static boolean singleWorld_mode;
-    public static World lobbyWorld;
+    public static boolean multiWorld_mode;
+
+    public static ArrayList<World> lobbyWorlds = new ArrayList<>();
 
     public static ActionbarScheduler scheduler;
     public static Updater updater;
@@ -83,9 +84,15 @@ public class AdvancedLobby extends JavaPlugin {
             scheduler.start();
         }
 
-        singleWorld_mode = AdvancedLobby.cfg.getBoolean("singleworld_mode");
+        multiWorld_mode = AdvancedLobby.cfg.getBoolean("multiworld_mode.enabled");
 
-        this.prepareLobbyWorld();
+        for (World world : Bukkit.getWorlds()) {
+            if (AdvancedLobby.cfg.getStringList("lobby_worlds").contains(world.getName())) {
+                lobbyWorlds.add(world);
+            }
+        }
+
+        this.prepareLobbyWorlds();
 
         this.registerCommands();
         this.registerListener();
@@ -93,7 +100,7 @@ public class AdvancedLobby extends JavaPlugin {
         Cosmetics.startBalloonTask();
 
         metrics = new Metrics(AdvancedLobby.getInstance(), 7014);
-        metrics.addCustomChart(new Metrics.SimplePie("singleworld_mode", () -> singleWorld_mode ? "enabled" : "disabled"));
+        metrics.addCustomChart(new Metrics.SimplePie("singleworld_mode", () -> multiWorld_mode ? "enabled" : "disabled"));
     }
 
     @Override
@@ -105,36 +112,23 @@ public class AdvancedLobby extends JavaPlugin {
         }
     }
 
-    private void prepareLobbyWorld() {
-        World world = null;
-
-        if (singleWorld_mode) {
-            if (Bukkit.getWorld(AdvancedLobby.cfg.getString("lobby_world")) == null) {
-                AdvancedLobby.getInstance().log("Lobby world not found, creating..");
-                Bukkit.createWorld(new WorldCreator(AdvancedLobby.cfg.getString("lobby_world")));
+    private void prepareLobbyWorlds() {
+        for (World world : multiWorld_mode ? AdvancedLobby.lobbyWorlds : Bukkit.getWorlds()) {
+            String weatherType = AdvancedLobby.cfg.getString("weather.weather_type").toUpperCase();
+            switch (weatherType) {
+                case ("CLEAR"):
+                    world.setStorm(false);
+                    world.setThundering(false);
+                    break;
+                case ("RAIN"):
+                    world.setStorm(true);
+                    world.setThundering(false);
+                    break;
+                case ("THUNDER"):
+                    world.setStorm(true);
+                    world.setThundering(true);
+                    break;
             }
-            AdvancedLobby.lobbyWorld = Bukkit.getWorld(AdvancedLobby.cfg.getString("lobby_world"));
-            world = lobbyWorld;
-        } else {
-            for (World worlds : Bukkit.getWorlds()) {
-                world = worlds;
-            }
-        }
-
-        String weatherType = AdvancedLobby.cfg.getString("weather.weather_type").toUpperCase();
-        switch (weatherType) {
-            case ("CLEAR"):
-                world.setStorm(false);
-                world.setThundering(false);
-                break;
-            case ("RAIN"):
-                world.setStorm(true);
-                world.setThundering(false);
-                break;
-            case ("THUNDER"):
-                world.setStorm(true);
-                world.setThundering(true);
-                break;
         }
     }
 
@@ -145,7 +139,7 @@ public class AdvancedLobby extends JavaPlugin {
         AdvancedLobby.getInstance().getCommand("fly").setExecutor(new FlyCommand());
         AdvancedLobby.getInstance().getCommand("gamemode").setExecutor(new GameModeCommand());
         AdvancedLobby.getInstance().getCommand("globalmute").setExecutor(new GlobalMuteCommand());
-        if (singleWorld_mode) {
+        if (multiWorld_mode) {
             AdvancedLobby.getInstance().getCommand("lobby").setExecutor(new LobbyCommand());
         }
         AdvancedLobby.getInstance().getCommand("teleportall").setExecutor(new TeleportAllCommand());

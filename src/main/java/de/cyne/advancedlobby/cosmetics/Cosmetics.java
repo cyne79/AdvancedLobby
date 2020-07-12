@@ -140,8 +140,6 @@ public class Cosmetics {
                 balloon.create();
             }
             balloons.put(player, balloon);
-
-
         }
     }
 
@@ -163,7 +161,7 @@ public class Cosmetics {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(AdvancedLobby.getInstance(), () -> {
             for (Player players : Bukkit.getOnlinePlayers()) {
                 if (balloons.containsKey(players)) {
-                    if (!AdvancedLobby.singleWorld_mode | players.getWorld() == AdvancedLobby.lobbyWorld) {
+                    if (!AdvancedLobby.multiWorld_mode | players.getWorld() == AdvancedLobby.lobbyWorlds) {
                         if (!AdvancedLobby.silentLobby.contains(players)) {
                             if (balloons.get(players).getFallingBlock() == null) {
                                 balloons.get(players).create();
@@ -194,7 +192,7 @@ public class Cosmetics {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(AdvancedLobby.getInstance(), () -> {
             for (Player players : Bukkit.getOnlinePlayers()) {
                 for (FallingBlock fallingBlocks : Balloon.fallingBlocks.values()) {
-                    if (!AdvancedLobby.singleWorld_mode | players.getWorld() == AdvancedLobby.lobbyWorld) {
+                    if (!AdvancedLobby.multiWorld_mode | players.getWorld() == AdvancedLobby.lobbyWorlds) {
                         if (!AdvancedLobby.silentLobby.contains(players)) {
                             VParticle.spawnParticle(players, "SPELL", fallingBlocks.getLocation(), 4, 0.0f, 0.0f, 0.0f, 0.1f);
                         }
